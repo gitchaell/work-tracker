@@ -1,6 +1,6 @@
-# WorkTraker
+# WorkTracker
 
-WorkTraker es una aplicación web desarrollada en React que ayuda a los freelancers a rastrear sus horas de trabajo y el precio por hora en diferentes monedas.
+WorkTracker es una aplicación web desarrollada en React que ayuda a los freelancers a rastrear sus horas de trabajo y el precio por hora en diferentes monedas.
 
 ## Requerimientos
 
