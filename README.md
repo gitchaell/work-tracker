@@ -18,10 +18,13 @@ Siga estos pasos para comenzar a usar la aplicación web:
 1. Ingrese el precio por hora en su moneda local.
 2. Seleccione las monedas de conversion de su conveniencia.
 3. Cree una tarea
-3. Inicie cronómetro para contabilizar el tiempo dedicado a la tarea.
-4. La aplicación acumulará el monto a cobrar en tiempo real.
-5. Sera notificado cada vez que se complete una hora de trabajo.
+4. Inicie cronómetro para contabilizar el tiempo dedicado a la tarea.
+5. La aplicación acumulará el monto a cobrar en tiempo real.
+6. Sera notificado cada vez que se complete una hora de trabajo.
 
+## Servicios externos
+
+1. Exchange Rates API - [https://exchangeratesapi.io/documentation/](https://exchangeratesapi.io/documentation/)
 
 ## Entidades
 
@@ -31,21 +34,21 @@ Las entidades que maneja la aplicación son las siguientes:
 
 Representa el precio por hora de trabajo.
 
-| Propiedad | Tipo   | Descripción                      |
-| --------- | ------ | -------------------------------- |
-| id        | string | Identificador único del precio   |
-| value     | number | Valor del precio                 |
-| date      | Date   | Fecha en que se registró el precio|
+| Propiedad | Tipo   | Descripción                        |
+| --------- | ------ | ---------------------------------- |
+| id        | string | Identificador único del precio     |
+| value     | number | Valor del precio                   |
+| date      | Date   | Fecha en que se registró el precio |
 
-### ConversionCurrency
+### Currency
 
 Representa una moneda de conversión.
 
-| Propiedad      | Tipo   | Descripción                           |
-| -------------- | ------ | ------------------------------------- |
-| id             | string | Identificador único de la moneda       |
-| code           | string | Código de la moneda (ej. USD, PEN, BOB)|
-| name           | string | Nombre de la moneda                    |
+| Propiedad | Tipo   | Descripción                             |
+| --------- | ------ | --------------------------------------- |
+| id        | string | Identificador único de la moneda        |
+| code      | string | Código de la moneda (ej. USD, PEN, BOB) |
+| name      | string | Nombre de la moneda                     |
 
 ### Task
 
@@ -57,7 +60,7 @@ Representa una tarea que se está trabajando.
 | description       | string | Descripción de la tarea                          |
 | hourlyRateId      | string | Identificador del precio por hora de la tarea    |
 | hourlyRateValue   | number | Valor del precio por hora de la tarea            |
-| accumulatedTime   | number | Tiempo acumulado de la tarea en minutos           |
+| accumulatedTime   | number | Tiempo acumulado de la tarea en minutos          |
 | accumulatedAmount | number | Monto acumulado de la tarea en la moneda de base |
 
 ### Diagram
@@ -71,7 +74,7 @@ classDiagram
     date: Date
   }
 
-  class ConversionCurrency{
+  class Currency{
     <<interface>>
     id: string
     code: string
@@ -89,5 +92,5 @@ classDiagram
   }
 
   HourlyRate --> Task
-  ConversionCurrency --> Task
+  Currency --> Task
 ```
