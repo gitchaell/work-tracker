@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Currency } from '../currency/currency.entity';
 
 export type ExperienceYears = '0-1' | '2-3' | '4-5' | '6-7' | '8-9' | '10+';
 export type MarketDemand = 'Low' | 'Normal' | 'High';
