@@ -1,8 +1,6 @@
-import BaseRepository from '../base/base.repository';
+import { SingleRepository } from '../base/single.repository';
 import { WorkProfile } from './work-profile.entity';
 
-class WorkProfileRateRepository extends BaseRepository<WorkProfile> {}
+class _WorkProfileRepository extends SingleRepository<WorkProfile> {}
 
-export default WorkProfileRateRepository.getInstance(
-	'WorkProfiles'
-) as BaseRepository<WorkProfile>;
+export const WorkProfileRepository = new _WorkProfileRepository('WorkProfile');

@@ -11,6 +11,7 @@ module.exports = {
 	plugins: ['react-refresh'],
 	rules: {
 		'react-refresh/only-export-components': 'warn',
-		indent: ['error', 'tab'],
+		'react-hooks/exhaustive-deps': 'off',
+		indent: ['error', 'tab', { SwitchCase: 1, VariableDeclarator: 2 }],
 	},
 };

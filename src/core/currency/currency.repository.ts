@@ -1,10 +1,6 @@
-import BaseRepository from '../base/base.repository';
+import { SingleRepository } from '../base/single.repository';
 import { Currency } from './currency.entity';
 
-class _CurrencyRepository extends BaseRepository<Currency> {}
+class _CurrencyRepository extends SingleRepository<Currency> {}
 
-const CurrencyRepository = _CurrencyRepository.getInstance(
-	'Currencies'
-) as BaseRepository<Currency>;
-
-export { CurrencyRepository };
+export const CurrencyRepository = new _CurrencyRepository('Currency');

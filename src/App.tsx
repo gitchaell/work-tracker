@@ -1,27 +1,29 @@
-import { useCallback, useEffect, useState } from 'react';
-import { CurrencyAPI } from './api/currency.api';
-import { CurrencyRepository } from './core/currency/currency.repository';
+// import { useContext } from 'react';
 import { CurrencyTab } from './core/currency/currency.tab';
+import { WorkProfileTab } from './core/work-profile/work-profile.tab';
+import { WorkRateCard } from './core/work-rate/work-rate.card';
+// import { AppContext } from './App.context';
+import { TaskTab } from './core/task/task.tab';
+import { WorkProfileForm } from './core/work-profile/work-profile.form';
 
-function App() {
-	const [currency, setCurrency] = useState(
-		CurrencyRepository.getAll().find((currency) => currency.selected)
+export const App = () => {
+	// const { loading } = useContext(AppContext);
+
+	return (
+		<main className="flex h-full flex-col gap-2">
+			<header className="flex items-center justify-between gap-2">
+				<CurrencyTab />
+				<WorkProfileTab />
+			</header>
+
+			<WorkProfileForm />
+
+			<section>
+				<WorkRateCard />
+			</section>
+			<section>
+				<TaskTab />
+			</section>
+		</main>
 	);
-
-	const setDefaultCurrency = useCallback(() => {
-		if (currency) return;
-
-		CurrencyAPI.getUserCurrency().then((defaultCurrency) => {
-			CurrencyRepository.create({ ...defaultCurrency, selected: true });
-			setCurrency(currency);
-		});
-	}, [currency]);
-
-	useEffect(() => {
-		setDefaultCurrency();
-	}, [setDefaultCurrency]);
-
-	return <>{currency && <CurrencyTab currency={currency} />}</>;
-}
-
-export default App;
+};

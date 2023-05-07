@@ -4,5 +4,8 @@ export interface Task {
 	workRateId: string;
 	totalTime: number;
 	totalAmount: number;
-	status: 'stopped' | 'running' | 'closed';
+	done: boolean;
+	status: 'paused' | 'running';
 }
+
+export type TaskFilter = 'all' | 'pending' | 'done';

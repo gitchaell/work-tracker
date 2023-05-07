@@ -7,7 +7,13 @@ module.exports = {
 	],
 	darkMode: 'class',
 	theme: {
-		extend: {},
+		extend: {
+			borderRadius: {
+				sm: '0.2rem',
+				md: '0.2rem',
+				lg: '0.2rem',
+			},
+		},
 	},
 	plugins: [require('flowbite/plugin')],
 };
