@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type ExperienceYears = '0-1' | '2-3' | '4-5' | '6-7' | '8-9' | '10+';
 export type MarketDemand = 'Low' | 'Normal' | 'High';
 
-export const EXPERIENCE_YEARS_FACTOR: Record<ExperienceYears, number> = {
+export const ExperienceYearsFactor: Record<ExperienceYears, number> = {
 	'0-1': 1.0,
 	'2-3': 1.2,
 	'4-5': 1.4,
@@ -12,13 +12,15 @@ export const EXPERIENCE_YEARS_FACTOR: Record<ExperienceYears, number> = {
 	'10+': 2.0,
 };
 
-export const MARKET_DEMAND_FACTOR: Record<MarketDemand, number> = {
+export const MarketDemandFactor: Record<MarketDemand, number> = {
 	Low: 1.0,
 	Normal: 1.1,
 	High: 1.2,
 };
 
 export interface WorkRate {
+	perSecond: number;
+	perMinute: number;
 	perHour: number;
 	perDay: number;
 	perWeek: number;
@@ -27,7 +29,7 @@ export interface WorkRate {
 	currencyId: string;
 }
 
-interface NewWorkProfile {
+interface WorkProfileDto {
 	title: string;
 	minSalary: number;
 	experience: ExperienceYears;
@@ -63,7 +65,7 @@ export class WorkProfile {
 		workHoursPerDay,
 		workDaysPerWeek,
 		currencyId,
-	}: NewWorkProfile) {
+	}: WorkProfileDto) {
 		this.id = uuidv4();
 		this.title = title;
 		this.minSalary = minSalary;
@@ -78,56 +80,39 @@ export class WorkProfile {
 		this.date = new Date().toISOString();
 	}
 
-	getRate() {
-		return {
-			perHour: this.calculateRate({ per: 'Hour' }),
-			perDay: this.calculateRate({ per: 'Day' }),
-			perWeek: this.calculateRate({ per: 'Week' }),
-			perMonth: this.calculateRate({ per: 'Month' }),
-			perYear: this.calculateRate({ per: 'Year' }),
-			currencyId: this.currencyId,
-		};
-	}
-
-	calculateRate({
-		per,
-	}: {
-		per: 'Hour' | 'Day' | 'Week' | 'Month' | 'Year';
-	}): number {
+	getRate(): WorkRate {
 		const weeksPerMonth = 4;
 
 		const workHoursPerWeek = this.workHoursPerDay * this.workDaysPerWeek;
-		const workHoursPerYear = weeksPerMonth * workHoursPerWeek;
+		const workHoursPerMonth = weeksPerMonth * workHoursPerWeek;
 
 		const baseSalary =
 			this.minSalary *
-			EXPERIENCE_YEARS_FACTOR[this.experience] *
-			MARKET_DEMAND_FACTOR[this.marketDemand];
+			ExperienceYearsFactor[this.experience] *
+			MarketDemandFactor[this.marketDemand];
 
-		const indirectCostsByHour = this.indirectCostsMonthly / workHoursPerYear;
-		const baseSalaryByHour = baseSalary / workHoursPerYear;
+		const indirectCostsByHour = this.indirectCostsMonthly / workHoursPerMonth;
+		const baseSalaryByHour = baseSalary / workHoursPerMonth;
 
 		const hourlyRate =
-			(baseSalaryByHour + indirectCostsByHour) *
-			((100 + this.profitMargin) / 100);
+			(baseSalaryByHour + indirectCostsByHour) * (1 + this.profitMargin / 100);
 
+		const secondlyRate = hourlyRate / 3600;
+		const minutelyRate = hourlyRate / 60;
 		const dailyRate = hourlyRate * this.workHoursPerDay;
 		const weeklyRate = dailyRate * this.workDaysPerWeek;
 		const monthlyRate = weeklyRate * 4;
 		const yearlyRate = monthlyRate * 12;
 
-		if (per === 'Hour') {
-			return hourlyRate;
-		} else if (per === 'Day') {
-			return dailyRate;
-		} else if (per === 'Week') {
-			return weeklyRate;
-		} else if (per === 'Month') {
-			return monthlyRate;
-		} else if (per === 'Year') {
-			return yearlyRate;
-		} else {
-			return 0;
-		}
+		return {
+			perSecond: secondlyRate,
+			perMinute: minutelyRate,
+			perHour: hourlyRate,
+			perDay: dailyRate,
+			perWeek: weeklyRate,
+			perMonth: monthlyRate,
+			perYear: yearlyRate,
+			currencyId: this.currencyId,
+		};
 	}
 }

@@ -1,13 +1,13 @@
-import { Button } from 'flowbite-react';
 import { useContext } from 'react';
-import { AppContext } from '../../App.context';
-import { TaskList } from './task.list';
+import { Button } from 'flowbite-react';
+import { AppContext } from '@/app/App.context';
+import { TaskList } from '.';
 
 export const TaskTab = () => {
 	const { setTaskFilter } = useContext(AppContext);
 
 	return (
-		<div className="flex flex-col gap-2">
+		<section className="flex flex-col gap-2">
 			<Button.Group className="w-full">
 				<Button
 					className="flex-grow"
@@ -33,6 +33,6 @@ export const TaskTab = () => {
 				</Button>
 			</Button.Group>
 			<TaskList />
-		</div>
+		</section>
 	);
 };

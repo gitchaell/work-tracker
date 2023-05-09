@@ -1,15 +1,17 @@
 import { Button, Dropdown } from 'flowbite-react';
 import { useContext } from 'react';
-import { AppContext } from '../../App.context';
 import { HiPlus } from '@react-icons/all-files/hi/HiPlus';
+import { HiPencil } from '@react-icons/all-files/hi/HiPencil';
+import { AppContext } from '@/app/App.context';
 
 export const WorkProfileTab = () => {
-	const { workProfile, workProfiles, selectWorkProfile, loading } =
-		useContext(AppContext);
-
-	const navigateToWorkProfileFormPage = () => {
-		throw new Error('Method not implemented.');
-	};
+	const {
+		workProfile,
+		workProfiles,
+		selectWorkProfile,
+		loading,
+		showWorkProfileForm,
+	} = useContext(AppContext);
 
 	return (
 		<Button.Group>
@@ -20,16 +22,6 @@ export const WorkProfileTab = () => {
 				size="sm"
 				title="Select a Work Profile"
 			>
-				{workProfiles.length === 0 && (
-					<Dropdown.Item
-						key="work-profiles.options.default"
-						className="flex items-center justify-center gap-2"
-						onClick={() => navigateToWorkProfileFormPage()}
-					>
-						<HiPlus />
-						Add Work Profile
-					</Dropdown.Item>
-				)}
 				{workProfiles.map((workProfile) => (
 					<Dropdown.Item
 						key={workProfile.id}
@@ -39,12 +31,33 @@ export const WorkProfileTab = () => {
 						{workProfile.title}
 					</Dropdown.Item>
 				))}
+				<Dropdown.Item
+					key="work-profiles.options.default"
+					className="flex items-center justify-center gap-2"
+					onClick={() => showWorkProfileForm(true)}
+				>
+					<HiPlus />
+					Add Work Profile
+				</Dropdown.Item>
 			</Dropdown>
+
+			<Button
+				color="dark"
+				size="sm"
+				className="!h-auto"
+				title="Edit Work Profile"
+				disabled={!workProfile}
+				onClick={() => showWorkProfileForm(true)}
+			>
+				<HiPencil />
+			</Button>
+
 			<Button
 				color="dark"
 				size="sm"
 				className="!h-auto"
 				title="Add Work Profile"
+				onClick={() => showWorkProfileForm(true)}
 			>
 				<HiPlus />
 			</Button>

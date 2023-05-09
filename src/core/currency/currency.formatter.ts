@@ -1,4 +1,4 @@
-import { Currency } from './currency.entity';
+import { Currency } from '.';
 
 export class CurrencyFormatter {
 	static format(

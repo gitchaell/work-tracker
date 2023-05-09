@@ -1,4 +1,4 @@
-import Entity from './base.entity';
+import { Entity } from './base.entity';
 
 export class SingleRepository<T extends Entity> {
 	constructor(private entityName: string) {}
@@ -24,5 +24,9 @@ export class SingleRepository<T extends Entity> {
 		this._set(item);
 
 		return item;
+	}
+
+	clear(): void {
+		this._set({} as T);
 	}
 }

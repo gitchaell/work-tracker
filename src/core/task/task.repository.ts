@@ -1,6 +1,6 @@
-import BaseRepository from '../base/base.repository';
-import { Task } from './task.entity';
+import { Task } from '.';
+import { MultiRepository } from '@/base';
 
-class TaskRateRepository extends BaseRepository<Task> {}
+class _TasksRepository extends MultiRepository<Task> {}
 
-export default TaskRateRepository.getInstance('Tasks') as BaseRepository<Task>;
+export const TasksRepository = new _TasksRepository('Tasks');

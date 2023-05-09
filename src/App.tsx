@@ -1,29 +1,40 @@
-// import { useContext } from 'react';
-import { CurrencyTab } from './core/currency/currency.tab';
-import { WorkProfileTab } from './core/work-profile/work-profile.tab';
-import { WorkRateCard } from './core/work-rate/work-rate.card';
-// import { AppContext } from './App.context';
-import { TaskTab } from './core/task/task.tab';
-import { WorkProfileForm } from './core/work-profile/work-profile.form';
+import { CurrencyTab } from '@/currency';
+import { WorkProfileTab } from '@/work-profile';
+import { WorkRateCard } from '@/work-rate';
+import { TaskTab } from '@/task';
+import { WorkProfileForm } from '@/work-profile';
+import { AppContext } from './App.context';
+import { useContext, useEffect } from 'react';
 
 export const App = () => {
-	// const { loading } = useContext(AppContext);
+	const { workProfile, workProfileFormIsVisible } = useContext(AppContext);
+
+	useEffect(() => {
+		console.count('App - Refresh');
+	}, [workProfileFormIsVisible]);
 
 	return (
-		<main className="flex h-full flex-col gap-2">
-			<header className="flex items-center justify-between gap-2">
-				<CurrencyTab />
-				<WorkProfileTab />
-			</header>
-
-			<WorkProfileForm />
-
-			<section>
-				<WorkRateCard />
-			</section>
-			<section>
-				<TaskTab />
-			</section>
+		<main className="flex h-full flex-col gap-2 p-2">
+			{workProfileFormIsVisible ? (
+				<WorkProfileForm />
+			) : (
+				<>
+					<header className="flex items-center justify-between gap-2">
+						<CurrencyTab />
+						<WorkProfileTab />
+					</header>
+					{workProfile ? (
+						<>
+							<WorkRateCard />
+							<TaskTab />
+						</>
+					) : (
+						<div className="p-4 text-center text-xl text-white">
+							Nothing here
+						</div>
+					)}
+				</>
+			)}
 		</main>
 	);
 };

@@ -1,5 +1,5 @@
-import { SingleRepository } from '../base/single.repository';
-import { Currency } from './currency.entity';
+import { SingleRepository } from '@/base';
+import { Currency } from '.';
 
 class _CurrencyRepository extends SingleRepository<Currency> {}
 

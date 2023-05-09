@@ -1,6 +1,5 @@
-import { MultiRepository } from '../base/multi.repository copy';
-import { CurrenciesData } from './currencies.data';
-import { Currency } from './currency.entity';
+import { MultiRepository } from '@/base';
+import { CurrenciesData, Currency } from '.';
 
 class _CurrenciesRepository extends MultiRepository<Currency> {
 	getAll(): Currency[] {

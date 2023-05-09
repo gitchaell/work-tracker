@@ -1,4 +1,4 @@
-import Entity from './base.entity';
+import { Entity } from './base.entity';
 
 export class MultiRepository<T extends Entity> {
 	constructor(private entityName: string) {}
@@ -21,56 +21,37 @@ export class MultiRepository<T extends Entity> {
 		return list.find((item) => item.id === id) || null;
 	}
 
-	create(item: T | null): T | null {
+	save(item: T | null): T | null {
 		if (!item) {
 			return null;
 		}
 
-		const list = this._get();
-
-		if (list.some(({ id }) => id === item.id)) {
-			return item;
-		}
-
-		this._set([...list, item]);
-
-		return item;
-	}
-
-	update(item: T | null): T | null {
-		if (!item) {
-			return null;
-		}
-
-		const list = this._get();
+		let list = this._get();
 
 		const index = list.findIndex(({ id }) => id === item.id);
 
 		if (index === -1) {
-			return this.create(item);
+			list = [...list, item];
+		} else {
+			list[index] = { ...list[index], ...item };
 		}
-
-		list[index] = { ...list[index], ...item };
 
 		this._set(list);
 
 		return item;
 	}
 
-	bulk(items: Array<T | null>): Array<T> {
-		items.forEach((item) => {
-			this.update(item);
-		});
-
-		return items.filter((item) => !!item) as Array<T>;
+	bulk(items: Array<T | null>): void {
+		items
+			.filter((item) => !!item)
+			.forEach((item) => {
+				this.save(item);
+			});
 	}
 
-	init(items: Array<T | null>): Array<T | null> {
+	init(items: Array<T | null>): void {
 		const newItems = items.filter((item) => !!item) as Array<T>;
-
 		this._set(newItems);
-
-		return newItems;
 	}
 
 	delete(item: T | null): T | null {

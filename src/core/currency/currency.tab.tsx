@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-import { CurrencyIcon } from './currency.icon';
 import { Dropdown } from 'flowbite-react';
-import { AppContext } from '../../App.context';
-import { CurrencyItem } from './currency.item';
+import { useContext } from 'react';
+import { CurrencyIcon, CurrencyItem } from '.';
+import { AppContext } from '@/app/App.context';
 
 export const CurrencyTab = () => {
 	const { currency, currencies, selectCurrency, loading } =

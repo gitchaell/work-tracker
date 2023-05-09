@@ -19,7 +19,17 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    /* Relatives Paths */
+    "baseUrl": "./",
+    "paths": {
+      "@/app/*": [
+        "./src/*"
+      ],
+      "@/*": [
+        "./src/core/*"
+      ]
+    }
   },
   "include": [
     "src"

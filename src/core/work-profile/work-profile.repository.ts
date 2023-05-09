@@ -1,5 +1,5 @@
-import { SingleRepository } from '../base/single.repository';
-import { WorkProfile } from './work-profile.entity';
+import { SingleRepository } from '@/base';
+import { WorkProfile } from '.';
 
 class _WorkProfileRepository extends SingleRepository<WorkProfile> {}
 

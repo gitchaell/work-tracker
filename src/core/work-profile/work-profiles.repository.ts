@@ -1,5 +1,5 @@
-import { MultiRepository } from '../base/multi.repository copy';
-import { WorkProfile } from './work-profile.entity';
+import { MultiRepository } from '@/base';
+import { WorkProfile } from '.';
 
 class _WorkProfilesRepository extends MultiRepository<WorkProfile> {}
 

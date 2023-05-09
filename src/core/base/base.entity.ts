@@ -1,5 +1,3 @@
-interface Entity {
+export interface Entity {
 	id: string;
 }
-
-export default Entity;

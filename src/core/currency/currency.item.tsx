@@ -1,5 +1,4 @@
-import { Currency } from './currency.entity';
-import { CurrencyIcon } from './currency.icon';
+import { Currency, CurrencyIcon } from '.';
 
 export const CurrencyItem = ({ currency }: { currency: Currency }) => {
 	return (
