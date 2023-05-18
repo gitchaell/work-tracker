@@ -8,6 +8,8 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -23,16 +25,25 @@
     /* Relatives Paths */
     "baseUrl": "./",
     "paths": {
-      "@/app/*": [
+      "@/*": [
         "./src/*"
       ],
-      "@/*": [
+      "@/core/*": [
         "./src/core/*"
-      ]
-    }
+      ],
+      "@/libs/*": [
+        "./src/libs/*"
+      ],
+      "@/routes/*": [
+        "./src/routes/*"
+      ],
+    },
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules",
   ],
   "references": [
     {

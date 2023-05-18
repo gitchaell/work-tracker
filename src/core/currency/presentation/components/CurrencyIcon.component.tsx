@@ -1,22 +1,11 @@
 export const CurrencyIcon = ({ code }: { code: string }) => {
 	if (code === 'USD') {
 		return (
-			<svg
-				width="22"
-				height="16"
-				viewBox="0 0 22 16"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
+			<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<g clipPath="url(#clip0_2_413)">
 					<g clipPath="url(#clip1_2_413)">
 						<rect width="22" height="16" rx="2" fill="white" />
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="M0 0H9.42857V7.46667H0V0Z"
-							fill="#1A47B8"
-						/>
+						<path fillRule="evenodd" clipRule="evenodd" d="M0 0H9.42857V7.46667H0V0Z" fill="#1A47B8" />
 						<path
 							fillRule="evenodd"
 							clipRule="evenodd"
@@ -45,13 +34,7 @@ export const CurrencyIcon = ({ code }: { code: string }) => {
 
 	if (code === 'PEN') {
 		return (
-			<svg
-				width="22"
-				height="16"
-				viewBox="0 0 22 16"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
+			<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<g clipPath="url(#clip0_2_687)">
 					<g clipPath="url(#clip1_2_687)">
 						<rect width="22" height="16" rx="2" fill="white" />
@@ -77,13 +60,7 @@ export const CurrencyIcon = ({ code }: { code: string }) => {
 
 	if (code === 'BOB') {
 		return (
-			<svg
-				width="22"
-				height="16"
-				viewBox="0 0 22 16"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
+			<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<g clipPath="url(#clip0_2_1353)">
 					<g clipPath="url(#clip1_2_1353)">
 						<path
@@ -126,18 +103,8 @@ export const CurrencyIcon = ({ code }: { code: string }) => {
 							d="M10.4762 7.46667H11.5238V8.53334H10.4762V7.46667Z"
 							fill="#249F58"
 						/>
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="M0 10.6667H22V16H0V10.6667Z"
-							fill="#249F58"
-						/>
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="M0 0H22V5.33333H0V0Z"
-							fill="#F93939"
-						/>
+						<path fillRule="evenodd" clipRule="evenodd" d="M0 10.6667H22V16H0V10.6667Z" fill="#249F58" />
+						<path fillRule="evenodd" clipRule="evenodd" d="M0 0H22V5.33333H0V0Z" fill="#F93939" />
 					</g>
 				</g>
 				<defs>

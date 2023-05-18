@@ -1,18 +1,25 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react()],
 	resolve: {
 		alias: [
 			{
-				find: '@/app',
+				find: '@',
 				replacement: '/src',
 			},
 			{
-				find: '@',
+				find: '@/core',
 				replacement: '/src/core',
+			},
+			{
+				find: '@/libs',
+				replacement: '/src/libs',
+			},
+			{
+				find: '@/routes',
+				replacement: '/src/routes',
 			},
 		],
 	},

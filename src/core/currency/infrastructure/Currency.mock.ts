@@ -1,6 +1,6 @@
-import { Currency } from '.';
+import { Currency } from '@/core/currency/domain/Currency.entity';
 
-export const CurrenciesData: Currency[] = [
+export const CurrencyMock: Currency[] = [
 	{
 		id: '295694dc-cbca-417c-83de-7ea29901a29f',
 		code: 'AED',
@@ -811,13 +811,7 @@ export const CurrenciesData: Currency[] = [
 		id: '2c7ea646-59fc-4c1c-ad9d-83abd8583a4e',
 		code: 'NZD',
 		name: 'unknown',
-		countries: [
-			'Cook Islands (The)',
-			'New Zealand',
-			'Niue',
-			'Pitcairn',
-			'Tokelau',
-		],
+		countries: ['Cook Islands (The)', 'New Zealand', 'Niue', 'Pitcairn', 'Tokelau'],
 		decimals: 2,
 	},
 	{

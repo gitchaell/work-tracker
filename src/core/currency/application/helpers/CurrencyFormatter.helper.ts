@@ -1,10 +1,7 @@
-import { Currency } from '.';
+import { FormatCurrencyDTO } from '@/core/currency/domain/Currency.dto';
 
 export class CurrencyFormatter {
-	static format(
-		value: number,
-		currency: Partial<Currency> = { code: 'USD', decimals: 2 }
-	): string {
+	static format(value: number, currency: FormatCurrencyDTO = { code: 'USD', decimals: 2 }): string {
 		return Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: currency.code,
