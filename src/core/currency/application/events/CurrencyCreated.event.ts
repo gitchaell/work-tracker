@@ -1,16 +1,10 @@
-import { IEvent, IEventHandler, Injectable } from 'use-cqrs';
+import { EventStorage } from '@/core/common/helpers/EventStorage.helper';
+import { Currency } from '@/core/currency/domain/Currency.entity';
 
-import { CreateCurrencyDTO } from '@/core/currency/domain/Currency.dto';
+export class CurrencyCreatedEvent {
+	static eventName = 'currency/created';
 
-export class CurrencyCreatedEvent implements IEvent {
-	constructor(public readonly currency: CreateCurrencyDTO) {}
-}
-
-@Injectable(CurrencyCreatedEvent)
-export class CurrencyCreatedEventHandler implements IEventHandler<CurrencyCreatedEvent> {
-	async handle(event: CurrencyCreatedEvent) {
-		const { currency } = event;
-
-		console.log('CurrencyCreatedEvent', currency);
+	static publish(detail: { currency: Currency }) {
+		EventStorage.save({ name: this.eventName, detail });
 	}
 }

@@ -11,7 +11,9 @@ export const HomePage = () => {
 				<CurrencyTab />
 				{/* <WorkProfileTab /> */}
 			</header>
+
 			<main className="flex h-full flex-col gap-2 p-2"></main>
+
 			<footer className="flex items-center justify-between gap-2 bg-gray-800 text-white">
 				{version} - {author} - {year}
 			</footer>

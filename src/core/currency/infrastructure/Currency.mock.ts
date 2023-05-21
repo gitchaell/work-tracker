@@ -140,14 +140,14 @@ export const CurrencyMock: Currency[] = [
 		id: 'd659f1ff-95e0-4538-a1d0-b5e2298f1d50',
 		code: 'BOB',
 		name: 'Boliviano',
-		countries: ['Bolivia (Plurinational State Of)'],
+		countries: ['Bolivia Plurinational State'],
 		decimals: 2,
 	},
 	{
 		id: 'f0354d8b-f994-422f-accc-0760ad2b75fd',
 		code: 'BOV',
 		name: 'unknown',
-		countries: ['Bolivia (Plurinational State Of)'],
+		countries: ['Bolivia Plurinational State'],
 		decimals: 2,
 	},
 	{
@@ -831,7 +831,7 @@ export const CurrencyMock: Currency[] = [
 	{
 		id: '8dacdd4b-82f6-4296-939e-215fc77155b9',
 		code: 'PEN',
-		name: 'Peruvian Nuevo Sol',
+		name: 'Nuevo Sol Peruano',
 		countries: ['Peru'],
 		decimals: 2,
 	},

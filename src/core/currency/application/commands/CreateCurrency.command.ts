@@ -1,21 +1,16 @@
-import { ICommand, ICommandHandler, Injectable, EventPublisher } from 'use-cqrs';
-
-import { CurrencyCreatedEvent } from '@/core/currency/application/events/CurrencyCreated.event';
 import { CreateCurrencyDTO } from '@/core/currency/domain/Currency.dto';
+import { Currency } from '@/core/currency/domain/Currency.entity';
+import { CurrencyCreatedEvent } from '@/core/currency/application/events/CurrencyCreated.event';
+import { CurrencyRepository } from '@/core/currency/infrastructure/Currency.repository';
+import { CurrencyMapper } from '@/core/currency/application/helpers/CurrencyMapper.helper';
 
-export class CreateCurrencyCommand implements ICommand {
-	constructor(public readonly currency: CreateCurrencyDTO) {}
-}
+export class CreateCurrencyCommand {
+	static execute(currencyDto: CreateCurrencyDTO): Currency {
+		const currencyData = CurrencyMapper.toCurrency(currencyDto);
+		const currencyCreated = CurrencyRepository.create(currencyData);
 
-@Injectable(CreateCurrencyCommand)
-export class CreateCurrencyHandler implements ICommandHandler<CreateCurrencyCommand> {
-	constructor(private readonly eventBus: EventPublisher) {}
+		CurrencyCreatedEvent.publish({ currency: currencyCreated });
 
-	async handle(command: CreateCurrencyCommand) {
-		const { currency } = command;
-
-		console.log('CreateCurrencyCommand', currency);
-
-		this.eventBus.publish(new CurrencyCreatedEvent(currency));
+		return currencyCreated;
 	}
 }

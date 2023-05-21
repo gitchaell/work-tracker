@@ -12,14 +12,13 @@
 	},
 	"dependencies": {
 		"@react-icons/all-files": "^4.1.0",
-		"class-validator": "^0.14.0",
 		"flowbite": "^1.6.5",
 		"flowbite-react": "^0.4.4",
 		"formik": "^2.2.9",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-router-dom": "^6.11.2",
 		"reflect-metadata": "^0.1.13",
-		"use-cqrs": "^1.2.2-beta",
 		"uuid": "^9.0.0",
 		"yup": "^1.1.1"
 	},

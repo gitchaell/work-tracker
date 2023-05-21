@@ -1,8 +1,9 @@
-import uuid from './uuid';
+import { Logger } from './Logger.helper';
+import { UUID } from './UUID.helper';
 
 const DATABASE_KEY = 'Database';
 
-export class LocalDatabase {
+class Database {
 	protected _get(): Map<string, Array<Entity>> {
 		try {
 			const store = JSON.parse(localStorage.getItem(DATABASE_KEY) || '[]');
@@ -23,13 +24,11 @@ export class LocalDatabase {
 	public getCollection<T extends Entity>(name: string, seed?: Array<T>): Collection<T> {
 		const database = this._get();
 
-		if (database.has(name)) {
-			console.log(`Collection ${name} restored`);
-			return Collection.restore<T>(name);
-		} else {
-			console.log(`Collection ${name} created`);
-			return new Collection<T>(name, seed);
-		}
+		const collection = database.get(name) ? Collection.restore<T>(name) : new Collection<T>(name, seed);
+
+		Logger.info('database', name + ' collection is initialized', collection.findAll());
+
+		return collection;
 	}
 }
 
@@ -57,7 +56,13 @@ class Collection<T extends Entity> {
 
 	protected _get(): Array<T> {
 		this.database = this._database();
-		return this.database.get(this.name) || [];
+		const collection = this.database.get(this.name);
+
+		if (!collection) {
+			return [];
+		}
+
+		return Array.from(collection.values());
 	}
 
 	protected _set(list: Array<T> = []): void {
@@ -76,11 +81,13 @@ class Collection<T extends Entity> {
 	}
 
 	create(item: T): T {
-		const newItem = { ...item, id: uuid() };
+		const newItem = { ...item, id: UUID() };
 
 		const newList = [...this._get(), newItem];
 
 		this._set(newList);
+
+		Logger.success('database', `${this.name} created`, newItem);
 
 		return item;
 	}
@@ -95,8 +102,12 @@ class Collection<T extends Entity> {
 
 			this._set(list);
 
+			Logger.success('database', `${this.name} updated`, item);
+
 			return item;
 		} else {
+			Logger.error('database', `${this.name} not updated`, item);
+
 			return null;
 		}
 	}
@@ -123,3 +134,5 @@ class Collection<T extends Entity> {
 interface Entity {
 	id: string;
 }
+
+export const DatabaseStorage = new Database();
