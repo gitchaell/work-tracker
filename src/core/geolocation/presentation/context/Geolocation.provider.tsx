@@ -8,7 +8,7 @@ import {
 	GeolocationStateInitializer,
 } from '@/core/geolocation/presentation/state/Geolocation.state';
 import { GeolocationContext } from '@/core/geolocation/presentation/context/Geolocation.context';
-import { GeolocationAPI } from '../../infrastructure/Geolocation.api';
+import { GeolocationAPI } from '@/core/geolocation/infrastructure/Geolocation.api';
 
 export const GeolocationProvider = ({ children }: { children: JSX.Element }) => {
 	const [{ geolocationSaved }, dispatch] = useReducer(

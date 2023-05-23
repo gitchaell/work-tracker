@@ -92,7 +92,7 @@ class Collection<T extends Entity> {
 		return item;
 	}
 
-	update(item: T): T | null {
+	update(item: T): T {
 		const list = this._get();
 
 		const index = list.findIndex(({ id }) => id === item.id);
@@ -103,13 +103,11 @@ class Collection<T extends Entity> {
 			this._set(list);
 
 			Logger.success('database', `${this.name} updated`, item);
-
-			return item;
 		} else {
 			Logger.error('database', `${this.name} not updated`, item);
-
-			return null;
 		}
+
+		return item;
 	}
 
 	bulk(items: Array<T>): void {
@@ -118,7 +116,7 @@ class Collection<T extends Entity> {
 		});
 	}
 
-	delete(item: T): T | null {
+	delete(item: T): T {
 		const list = this._get().filter(({ id }) => id !== item.id);
 
 		this._set(list);

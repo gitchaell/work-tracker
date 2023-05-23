@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import { Currency } from '@/core/currency/domain/Currency.entity';
 import { CurrencyService } from '@/core/currency/application/Currency.service';
@@ -8,9 +8,14 @@ import {
 	CurrencyStateInitializer,
 } from '@/core/currency/presentation/state/Currency.state';
 import { CurrencyContext } from '@/core/currency/presentation/context/Currency.context';
+import {
+	GeolocationSavedEvent,
+	GeolocationSavedEventListener,
+} from '@/core/geolocation/application/events/GeolocationSaved.event';
 
 export const CurrencyProvider = ({ children }: { children: JSX.Element }) => {
 	const [currencies, setCurrencies] = useState([] as Currency[]);
+
 	const [{ currencySelected }, dispatch] = useReducer(
 		CurrencyReducer,
 		CurrencyInitialState,
@@ -31,7 +36,25 @@ export const CurrencyProvider = ({ children }: { children: JSX.Element }) => {
 		dispatch({ type: 'currency/unselected', payload: null });
 	}, []);
 
-	// TODO: Subscribe to GeolocationSaveEvent and change currencySelected
+	useEffect(() => {
+		const handleChangeGeolocation: GeolocationSavedEventListener = (event) => {
+			const { geolocation } = event.detail;
+
+			const currency = CurrencyService.findCurrencies().find((currency) =>
+				currency.countries.includes(geolocation.country)
+			);
+
+			if (currency) {
+				selectCurrency(currency);
+			}
+		};
+
+		GeolocationSavedEvent.subscribe(handleChangeGeolocation);
+
+		return () => {
+			GeolocationSavedEvent.unsubscribe(handleChangeGeolocation);
+		};
+	}, []);
 
 	return (
 		<CurrencyContext.Provider

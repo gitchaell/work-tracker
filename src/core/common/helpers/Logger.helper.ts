@@ -10,7 +10,7 @@ const LogColor = {
 export class Logger {
 	static enabled = true;
 
-	static log(type: LogType, module: string, title: string, ...body: any[]): void {
+	static log(type: LogType, module: string, title: string, body: any): void {
 		if (!Logger.enabled) return;
 
 		console.group(`%c[${module}] ${title}`, 'color: ' + LogColor[type]);
@@ -18,19 +18,19 @@ export class Logger {
 		console.groupEnd();
 	}
 
-	static info(module: string, title: string, ...body: any[]): void {
-		Logger.log('info', module, title, ...body);
+	static info(module: string, title: string, body: any): void {
+		Logger.log('info', module, title, body);
 	}
 
-	static success(module: string, title: string, ...body: any[]): void {
-		Logger.log('success', module, title, ...body);
+	static success(module: string, title: string, body: any): void {
+		Logger.log('success', module, title, body);
 	}
 
-	static error(module: string, title: string, ...body: any[]): void {
-		Logger.log('error', module, title, ...body);
+	static error(module: string, title: string, body: any): void {
+		Logger.log('error', module, title, body);
 	}
 
-	static warn(module: string, title: string, ...body: any[]): void {
-		Logger.log('warn', module, title, ...body);
+	static warn(module: string, title: string, body: any): void {
+		Logger.log('warn', module, title, body);
 	}
 }

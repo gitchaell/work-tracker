@@ -13,7 +13,6 @@ export class GeolocationAPI {
 			address: response.display_name,
 			latitude: coords.latitude,
 			longitude: coords.longitude,
-			countryCode: response.address.country_code,
 		};
 	}
 }

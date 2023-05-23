@@ -17,7 +17,3 @@ export interface FormatCurrencyDTO {
 	code: string;
 	decimals: number;
 }
-
-export interface FindCurrenciesDTO {
-	limit: number;
-}

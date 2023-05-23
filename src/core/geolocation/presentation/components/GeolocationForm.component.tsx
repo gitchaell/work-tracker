@@ -1,15 +1,14 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { Button, Label, TextInput } from 'flowbite-react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
 import { GeolocationContext } from '@/core/geolocation/presentation/context/Geolocation.context';
 import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
-import { useNavigate } from 'react-router-dom';
 
 const GeolocationValidationSchema = Yup.object().shape({
 	id: Yup.string(),
-	countryCode: Yup.string().required(),
 	country: Yup.string().required(),
 	state: Yup.string().required(),
 	city: Yup.string().required(),
@@ -20,12 +19,13 @@ const GeolocationValidationSchema = Yup.object().shape({
 
 export const GeolocationForm = () => {
 	const { findGeolocation, fetchGeolocation, saveGeolocation } = useContext(GeolocationContext);
+	const [autoFilling, setAutoFilling] = useState(false);
+
 	const navigate = useNavigate();
 
 	const formik = useFormik({
 		initialValues: findGeolocation() || {
 			id: '',
-			countryCode: '',
 			country: '',
 			state: '',
 			city: '',
@@ -41,6 +41,8 @@ export const GeolocationForm = () => {
 	});
 
 	const handleAutoFillForm = useCallback(() => {
+		setAutoFilling(true);
+
 		fetchGeolocation().then((response) => {
 			const geolocation = formik.values as Geolocation;
 
@@ -51,6 +53,8 @@ export const GeolocationForm = () => {
 			};
 
 			formik.setValues(geolocationData);
+
+			setAutoFilling(false);
 		});
 	}, []);
 
@@ -75,11 +79,12 @@ export const GeolocationForm = () => {
 					color={formik.errors.country && formik.touched.country ? 'failure' : 'default'}
 				/>
 				<TextInput
-					id="title"
+					id="country"
 					type="text"
 					placeholder="Bolivia"
 					required={true}
 					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -93,20 +98,113 @@ export const GeolocationForm = () => {
 			<div className="flex flex-col gap-2">
 				<Label
 					htmlFor="state"
-					value={'State ' + (formik.errors.country || '')}
-					color={formik.errors.country && formik.touched.country ? 'failure' : 'default'}
+					value={'State ' + (formik.errors.state || '')}
+					color={formik.errors.state && formik.touched.state ? 'failure' : 'default'}
 				/>
 				<TextInput
-					id="title"
+					id="state"
 					type="text"
 					placeholder="Santa Cruz"
 					required={true}
 					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
 					color={formik.errors.state && formik.touched.state ? 'failure' : 'default'}
 					value={formik.values.state}
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+				/>
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<Label
+					htmlFor="city"
+					value={'City ' + (formik.errors.city || '')}
+					color={formik.errors.city && formik.touched.city ? 'failure' : 'default'}
+				/>
+				<TextInput
+					id="city"
+					type="text"
+					placeholder="Santa Cruz de la Sierra"
+					required={true}
+					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
+					theme={{
+						field: { input: { base: 'bg-gray-800 text-white w-full' } },
+					}}
+					color={formik.errors.city && formik.touched.city ? 'failure' : 'default'}
+					value={formik.values.city}
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+				/>
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<Label
+					htmlFor="address"
+					value={'Address ' + (formik.errors.address || '')}
+					color={formik.errors.address && formik.touched.address ? 'failure' : 'default'}
+				/>
+				<TextInput
+					id="address"
+					type="text"
+					placeholder="Calle Rene Moreno"
+					required={true}
+					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
+					theme={{
+						field: { input: { base: 'bg-gray-800 text-white w-full' } },
+					}}
+					color={formik.errors.address && formik.touched.address ? 'failure' : 'default'}
+					value={formik.values.address}
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+				/>
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<Label
+					htmlFor="latitude"
+					value={'Latitude ' + (formik.errors.latitude || '')}
+					color={formik.errors.latitude && formik.touched.latitude ? 'failure' : 'default'}
+				/>
+				<TextInput
+					id="latitude"
+					type="text"
+					placeholder="0.000000000"
+					required={true}
+					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
+					theme={{
+						field: { input: { base: 'bg-gray-800 text-white w-full' } },
+					}}
+					color={formik.errors.latitude && formik.touched.latitude ? 'failure' : 'default'}
+					value={formik.values.latitude}
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+				/>
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<Label
+					htmlFor="longitude"
+					value={'Longitude ' + (formik.errors.longitude || '')}
+					color={formik.errors.longitude && formik.touched.longitude ? 'failure' : 'default'}
+				/>
+				<TextInput
+					id="longitude"
+					type="text"
+					placeholder="0.000000000"
+					required={true}
+					sizing="sm"
+					addon={autoFilling && <Spinner color="success" size="sm" />}
+					theme={{
+						field: { input: { base: 'bg-gray-800 text-white w-full' } },
+					}}
+					color={formik.errors.longitude && formik.touched.longitude ? 'failure' : 'default'}
+					value={formik.values.longitude}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 				/>

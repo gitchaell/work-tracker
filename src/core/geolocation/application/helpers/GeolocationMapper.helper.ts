@@ -10,7 +10,6 @@ export class GeolocationMapper {
 			latitude: geolocationDTO.latitude,
 			longitude: geolocationDTO.longitude,
 			address: geolocationDTO.address,
-			countryCode: geolocationDTO.countryCode,
 		} as Geolocation;
 	}
 }
