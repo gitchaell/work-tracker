@@ -15,7 +15,7 @@ export const App = () => {
 				<CurrencyProvider>
 					<WorkProvider>
 						<TaskProvider>
-							<BrowserRouter>
+							<BrowserRouter basename="/work-tracker">
 								<Router />
 							</BrowserRouter>
 						</TaskProvider>
