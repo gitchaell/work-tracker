@@ -1,12 +1,12 @@
-import { useContext } from 'react';
-import { TextInput } from 'flowbite-react';
+import { useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Label, TextInput } from 'flowbite-react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
 import { TaskContext } from '@/core/task/presentation/context/Task.context';
 import { Task } from '@/core/task/domain/Task.entity';
 import { WorkContext } from '@/core/work/presentation/context/Work.context';
-import { HiPlus } from '@react-icons/all-files/hi/HiPlus';
 
 const TaskValidationSchema = Yup.object().shape({
 	id: Yup.string(),
@@ -16,7 +16,8 @@ const TaskValidationSchema = Yup.object().shape({
 
 export const TaskForm = () => {
 	const { workSelected } = useContext(WorkContext);
-	const { taskSelected, createTask } = useContext(TaskContext);
+	const { taskSelected, createTask, updateTask, deleteTask, unselectTask } = useContext(TaskContext);
+	const navigate = useNavigate();
 
 	const formik = useFormik<Task>({
 		initialValues: {
@@ -30,28 +31,72 @@ export const TaskForm = () => {
 		},
 		validationSchema: TaskValidationSchema,
 		onSubmit: (taskData) => {
-			createTask(taskData);
-			formik.resetForm();
+			if (taskData.id) {
+				updateTask(taskData);
+			} else {
+				createTask(taskData);
+			}
+			navigate('/home');
+			unselectTask();
 		},
 	});
 
+	const handleDeleteWork = useCallback(() => {
+		if (taskSelected) {
+			deleteTask({ id: taskSelected.id });
+			navigate('/home');
+			unselectTask();
+		}
+	}, []);
+
+	const handleCancelForm = useCallback(() => {
+		navigate('/home');
+		unselectTask();
+	}, []);
+
 	return (
-		<form className="flex gap-2" onSubmit={formik.handleSubmit}>
-			<TextInput
-				id="description"
-				type="text"
-				placeholder="Save the world ..."
+		<form className="flex flex-col gap-4" onSubmit={formik.handleSubmit}>
+			<div className="text-center text-xl font-medium text-white">Task Form</div>
+
+			<div className="flex flex-col gap-2">
+				<Label
+					htmlFor="description"
+					value={'Description ' + (formik.errors.description || '')}
+					color={formik.errors.description && formik.touched.description ? 'failure' : 'default'}
+				/>
+				<TextInput
+					id="description"
+					type="text"
+					placeholder="Save the world ..."
+					className="flex-grow"
+					required={true}
+					sizing="sm"
+					theme={{
+						field: { input: { base: 'bg-gray-800 text-white w-full' } },
+					}}
+					value={formik.values.description}
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+				/>
+			</div>
+
+			<Button className="flex-grow" type="submit">
+				Save
+			</Button>
+
+			<Button className="flex-grow" type="button" color="gray" onClick={handleCancelForm}>
+				Cancel
+			</Button>
+
+			<Button
 				className="flex-grow"
-				required={true}
-				sizing="sm"
-				rightIcon={HiPlus}
-				theme={{
-					field: { input: { base: 'bg-gray-800 text-white w-full' } },
-				}}
-				value={formik.values.description}
-				onChange={formik.handleChange}
-				onBlur={formik.handleBlur}
-			/>
+				type="button"
+				color="failure"
+				onClick={handleDeleteWork}
+				style={{ display: formik.values.id ? 'visible' : 'none' }}
+			>
+				Delete
+			</Button>
 		</form>
 	);
 };

@@ -15,6 +15,10 @@ export const WorkRateCard = () => {
 		setRate(workSelected?.rate || null);
 	}, [workSelected]);
 
+	if (!currencySelected || !workSelected) {
+		return null;
+	}
+
 	return (
 		<section className="flex flex-col rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
 			<div className="flex h-full flex-col justify-center gap-4 p-4">

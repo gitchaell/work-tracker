@@ -7,7 +7,7 @@ import { HiPencil } from '@react-icons/all-files/hi/HiPencil';
 import { WorkContext } from '@/core/work/presentation/context/Work.context';
 
 export const WorkTab = () => {
-	const { workSelected, works, findWorks, selectWork } = useContext(WorkContext);
+	const { workSelected, works, findWorks, selectWork, unselectWork } = useContext(WorkContext);
 
 	const navigate = useNavigate();
 
@@ -16,6 +16,7 @@ export const WorkTab = () => {
 	}, []);
 
 	const handleAddWork = useCallback(() => {
+		unselectWork();
 		navigate('/work/form');
 	}, []);
 

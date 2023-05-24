@@ -118,5 +118,6 @@ export const CurrencyIcon = ({ code }: { code: string }) => {
 			</svg>
 		);
 	}
+
 	return <></>;
 };

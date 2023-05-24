@@ -8,17 +8,16 @@ export class TimeTaskCommand {
 
 	static start(task: Task, work: Work): void {
 		TimeTaskCommand.timers[task.id] = new TaskTimer(task, work);
+
 		TimeTaskCommand.timers[task.id].setTickHandler((task) => {
 			TaskTimedEvent.publish({ task });
 		});
-		TimeTaskCommand.timers[task.id].start();
 
-		TaskTimedEvent.publish({ task });
+		TimeTaskCommand.timers[task.id].start();
 	}
 
 	static stop(task: Task): void {
 		TimeTaskCommand.timers[task.id].stop();
 		delete TimeTaskCommand.timers[task.id];
-		TaskTimedEvent.publish({ task });
 	}
 }

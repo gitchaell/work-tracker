@@ -13,9 +13,9 @@ interface TaskContextProps {
 	unselectTask: () => void;
 	startTask: (task: Task, work: Work) => void;
 	stopTask: (task: Task) => void;
-	createTask: (task: CreateTaskDTO) => void;
-	updateTask: (task: UpdateTaskDTO) => void;
-	deleteTask: (task: DeleteTaskDTO) => void;
+	createTask: (task: CreateTaskDTO) => Task | null;
+	updateTask: (task: UpdateTaskDTO) => Task;
+	deleteTask: (task: DeleteTaskDTO) => Task;
 }
 
 export const TaskContext = createContext<TaskContextProps>({

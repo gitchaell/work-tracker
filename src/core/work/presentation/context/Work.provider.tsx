@@ -28,19 +28,20 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 		dispatch({ type: 'work/selected', payload: work });
 	}, []);
 
+	const unselectWork = useCallback(() => {
+		dispatch({ type: 'work/unselected', payload: null });
+	}, []);
+
 	const createWork = useCallback((work: CreateWorkDTO) => {
-		const workCreated = WorkService.createWork(work);
-		dispatch({ type: 'work/selected', payload: workCreated });
+		return WorkService.createWork(work);
 	}, []);
 
 	const updateWork = useCallback((work: UpdateWorkDTO) => {
-		const workUpdated = WorkService.updateWork(work);
-		dispatch({ type: 'work/selected', payload: workUpdated });
+		return WorkService.updateWork(work);
 	}, []);
 
 	const deleteWork = useCallback((work: DeleteWorkDTO) => {
-		WorkService.deleteWork(work);
-		dispatch({ type: 'work/unselected', payload: null });
+		return WorkService.deleteWork(work);
 	}, []);
 
 	useEffect(() => {
@@ -67,6 +68,7 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 				workSelected,
 				findWorks,
 				selectWork,
+				unselectWork,
 				createWork,
 				updateWork,
 				deleteWork,

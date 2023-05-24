@@ -22,7 +22,7 @@ export const HomePage = () => {
 				<TaskTab />
 			</main>
 
-			<footer className="flex items-center justify-center gap-2 bg-gray-900 px-2 py-8 text-white">
+			<footer className="mt-64 flex items-center justify-center gap-2 bg-gray-900 px-2 py-8 text-white">
 				<Avatar img="https://avatars.githubusercontent.com/u/37460957?s=40&v=4" rounded={true}>
 					<div className="space-y-1 font-medium dark:text-white">
 						<div>{author}</div>

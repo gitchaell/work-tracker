@@ -9,9 +9,9 @@ import {
 } from '@/core/task/presentation/state/Task.state';
 import { TaskContext } from '@/core/task/presentation/context/Task.context';
 import { CreateTaskDTO, DeleteTaskDTO, FindTasksDTO, UpdateTaskDTO } from '@/core/task/domain/Task.dto';
-import { TaskCreatedEvent } from '@/core/task/application/events/TaskCreated.event';
-import { TaskUpdatedEvent } from '@/core/task/application/events/TaskUpdated.event';
-import { TaskDeletedEvent } from '@/core/task/application/events/TaskDeleted.event';
+import { TaskCreatedEvent, TaskCreatedEventListener } from '@/core/task/application/events/TaskCreated.event';
+import { TaskUpdatedEvent, TaskUpdatedEventListener } from '@/core/task/application/events/TaskUpdated.event';
+import { TaskDeletedEvent, TaskDeletedEventListener } from '@/core/task/application/events/TaskDeleted.event';
 import { TaskTimedEvent, TaskTimedEventListener } from '@/core/task/application/events/TaskTimed.event';
 import { Work } from '@/core/work/domain/Work.entity';
 
@@ -49,41 +49,49 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 	}, []);
 
 	const createTask = useCallback((task: CreateTaskDTO) => {
-		TaskService.createTask(task);
+		return TaskService.createTask(task);
 	}, []);
 
 	const updateTask = useCallback((task: UpdateTaskDTO) => {
-		TaskService.updateTask(task);
+		return TaskService.updateTask(task);
 	}, []);
 
 	const deleteTask = useCallback((task: DeleteTaskDTO) => {
-		TaskService.deleteTask(task);
+		return TaskService.deleteTask(task);
 	}, []);
 
 	useEffect(() => {
-		const handleTaskManipulation = () => {
-			const tasks = TaskService.findTasks({ status: 'all' });
-			setTasks(tasks);
+		const handleTaskCreated: TaskCreatedEventListener = (event) => {
+			const { task } = event.detail;
+			setTasks((previous) => [...previous, task]);
+		};
+
+		const handleTaskUpdated: TaskUpdatedEventListener = (event) => {
+			const { task } = event.detail;
+			setTasks((previous) => previous.map((t) => (t.id === task.id ? task : t)));
+		};
+
+		const handleTaskDeleted: TaskDeletedEventListener = (event) => {
+			const { task } = event.detail;
+			setTasks((previous) => previous.filter((t) => t.id !== task.id));
 		};
 
 		const handleTaskTimed: TaskTimedEventListener = (event) => {
 			const { task } = event.detail;
-			console.log({ task });
-			TaskService.updateTask(task);
-			const tasks = TaskService.findTasks({ status: 'all' });
-			setTasks(tasks);
+			const taskUpdated = TaskService.updateTask(task);
+			setTasks((previous) => previous.map((t) => (t.id === taskUpdated.id ? taskUpdated : t)));
 		};
 
-		TaskCreatedEvent.subscribe(handleTaskManipulation);
-		TaskUpdatedEvent.subscribe(handleTaskManipulation);
-		TaskDeletedEvent.subscribe(handleTaskManipulation);
+		TaskCreatedEvent.subscribe(handleTaskCreated);
+		TaskUpdatedEvent.subscribe(handleTaskUpdated);
+		TaskDeletedEvent.subscribe(handleTaskDeleted);
 
 		TaskTimedEvent.subscribe(handleTaskTimed);
 
 		return () => {
-			TaskCreatedEvent.unsubscribe(handleTaskManipulation);
-			TaskUpdatedEvent.unsubscribe(handleTaskManipulation);
-			TaskDeletedEvent.unsubscribe(handleTaskManipulation);
+			TaskCreatedEvent.unsubscribe(handleTaskCreated);
+			TaskUpdatedEvent.unsubscribe(handleTaskUpdated);
+			TaskDeletedEvent.unsubscribe(handleTaskDeleted);
 
 			TaskTimedEvent.unsubscribe(handleTaskTimed);
 		};

@@ -1,4 +1,5 @@
 import { useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ImCheckboxChecked } from '@react-icons/all-files/im/ImCheckboxChecked';
 import { ImCheckboxUnchecked } from '@react-icons/all-files/im/ImCheckboxUnchecked';
 import { FaPlayCircle } from '@react-icons/all-files/fa/FaPlayCircle';
@@ -14,28 +15,40 @@ import { CurrencyFormatter } from '@/core/currency/application/helpers/CurrencyF
 export const TaskCard = ({ task }: { task: Task }) => {
 	const { currencySelected } = useContext(CurrencyContext);
 	const { workSelected } = useContext(WorkContext);
-	const { startTask, stopTask } = useContext(TaskContext);
+	const { updateTask, startTask, stopTask, selectTask } = useContext(TaskContext);
+	const navigate = useNavigate();
 
-	const handleToggleTimer = useCallback((task: Task) => {
+	const handleToggleDone = useCallback(() => {
+		updateTask({ ...task, done: !task.done });
+	}, [task]);
+
+	const handleSelectTask = useCallback(() => {
+		selectTask(task);
+		navigate('/task/form');
+	}, [task]);
+
+	const handleToggleTimer = useCallback(() => {
 		if (!workSelected) {
 			return;
 		}
 
-		if (task && task.status === 'paused') {
+		if (task.status === 'paused') {
 			startTask(task, workSelected);
 		} else {
 			stopTask(task);
 		}
-	}, []);
+	}, [task]);
 
 	return (
-		<div className="flex items-center gap-2 rounded-lg border border-gray-500 bg-gray-800 p-2" key={task.id}>
-			{!task.done && <ImCheckboxUnchecked className="cursor-pointer text-gray-300" />}
-			{task.done && <ImCheckboxChecked className="cursor-pointer text-blue-500" />}
+		<div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 p-2" key={task.id}>
+			{!task.done && (
+				<ImCheckboxUnchecked className="cursor-pointer text-gray-300" onClick={handleToggleDone} />
+			)}
+			{task.done && <ImCheckboxChecked className="cursor-pointer text-blue-500" onClick={handleToggleDone} />}
 
-			<div className="flex flex-grow cursor-pointer flex-col">
-				<div className=" text-sm text-white">{task.description}</div>
-				<div className="text-sm text-gray-400">
+			<div className="flex flex-grow cursor-pointer flex-col" onClick={handleSelectTask}>
+				<div className="text-sm text-white">{task.description}</div>
+				<div className="text-xs text-gray-400">
 					{`${TaskTimerFormatter.toTimer(task.totalSeconds)} / ${CurrencyFormatter.format(
 						task.totalAmount,
 						currencySelected
@@ -44,10 +57,10 @@ export const TaskCard = ({ task }: { task: Task }) => {
 			</div>
 
 			{task.status === 'paused' && (
-				<FaPlayCircle className="cursor-pointer text-white" onClick={() => handleToggleTimer(task)} />
+				<FaPlayCircle className="cursor-pointer text-white" onClick={handleToggleTimer} />
 			)}
 			{task.status === 'running' && (
-				<FaStopCircle className="cursor-pointer text-white" onClick={() => handleToggleTimer(task)} />
+				<FaStopCircle className="cursor-pointer text-white" onClick={handleToggleTimer} />
 			)}
 		</div>
 	);

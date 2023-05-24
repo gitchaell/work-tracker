@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import * as Yup from 'yup';
@@ -27,25 +27,25 @@ const WorkValidationSchema = Yup.object().shape({
 		.min(1, 'must be greater than 1 day')
 		.max(7, 'must be less than 7 days')
 		.required('is required'),
-	currencyId: Yup.string().required('is required'),
 });
 
 export const WorkForm = () => {
-	const { currencySelected, currencies } = useContext(CurrencyContext);
-	const { workSelected, createWork, updateWork, deleteWork } = useContext(WorkContext);
+	const { currencySelected, currencies, findCurrencies } = useContext(CurrencyContext);
+	const { workSelected, createWork, updateWork, deleteWork, selectWork, unselectWork } =
+		useContext(WorkContext);
 	const navigate = useNavigate();
 
 	const formik = useFormik<Work>({
 		initialValues: {
 			id: workSelected ? workSelected.id : '',
-			title: workSelected ? workSelected.title : 'InStrategy Corp.',
-			minSalary: workSelected ? workSelected.minSalary : 2250,
-			experience: workSelected ? workSelected.experience : '4-5',
+			title: workSelected ? workSelected.title : '',
+			minSalary: workSelected ? workSelected.minSalary : 0,
+			experience: workSelected ? workSelected.experience : '0-1',
 			marketDemand: workSelected ? workSelected.marketDemand : 'Normal',
-			indirectCostsMonthly: workSelected ? workSelected.indirectCostsMonthly : 1300,
+			indirectCostsMonthly: workSelected ? workSelected.indirectCostsMonthly : 0,
 			profitMargin: workSelected ? workSelected.profitMargin : 0,
-			workHoursPerDay: workSelected ? workSelected.workHoursPerDay : 8,
-			workDaysPerWeek: workSelected ? workSelected.workDaysPerWeek : 5,
+			workHoursPerDay: workSelected ? workSelected.workHoursPerDay : 0,
+			workDaysPerWeek: workSelected ? workSelected.workDaysPerWeek : 0,
 			rate: {
 				perSecond: 0,
 				perMinute: 0,
@@ -60,11 +60,15 @@ export const WorkForm = () => {
 		},
 		validationSchema: WorkValidationSchema,
 		onSubmit: (workData) => {
+			let workSaved = null;
+
 			if (workSelected) {
-				updateWork({ ...workSelected, ...workData, id: workSelected.id });
+				workSaved = updateWork({ ...workSelected, ...workData, id: workSelected.id });
 			} else {
-				createWork(workData);
+				workSaved = createWork(workData);
 			}
+
+			selectWork(workSaved);
 			navigate('/home');
 		},
 	});
@@ -72,6 +76,7 @@ export const WorkForm = () => {
 	const handleDeleteWork = useCallback(() => {
 		if (workSelected) {
 			deleteWork({ id: workSelected.id });
+			unselectWork();
 			navigate('/home');
 		}
 	}, []);
@@ -79,6 +84,14 @@ export const WorkForm = () => {
 	const handleCancelForm = useCallback(() => {
 		navigate('/home');
 	}, []);
+
+	useEffect(() => {
+		findCurrencies();
+	}, []);
+
+	if (!currencySelected) {
+		return null;
+	}
 
 	return (
 		<form className="flex flex-col gap-4" onSubmit={formik.handleSubmit}>
@@ -99,16 +112,19 @@ export const WorkForm = () => {
 					}}
 					sizing="sm"
 					placeholder="BOB - Boliviano"
+					// addon={
+					// 	<CurrencyIcon code={currencies.find((c) => c.id === formik.values.currencyId)?.code || 'USD'} />
+					// }
 					value={formik.values.currencyId}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 				>
 					<option value=""></option>
-					{currencies.map((currencyItem) => (
+					{currencies.map(($currency) => (
 						<option
-							key={currencyItem.id}
-							value={currencyItem.id}
-							label={currencyItem.code + ' - ' + currencyItem.name}
+							key={$currency.id}
+							value={$currency.id}
+							label={$currency.code + ' - ' + $currency.name}
 						></option>
 					))}
 				</Select>

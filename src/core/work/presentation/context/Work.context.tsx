@@ -8,9 +8,10 @@ interface WorkContextProps {
 	workSelected: Work | null;
 	findWorks: () => Work[];
 	selectWork: (work: Work) => void;
-	createWork: (work: CreateWorkDTO) => void;
-	updateWork: (work: UpdateWorkDTO) => void;
-	deleteWork: (work: DeleteWorkDTO) => void;
+	unselectWork: () => void;
+	createWork: (work: CreateWorkDTO) => Work;
+	updateWork: (work: UpdateWorkDTO) => Work;
+	deleteWork: (work: DeleteWorkDTO) => Work;
 }
 
 export const WorkContext = createContext<WorkContextProps>({
@@ -21,6 +22,9 @@ export const WorkContext = createContext<WorkContextProps>({
 	},
 	selectWork: () => {
 		throw new Error('selectWork() method not implemented.');
+	},
+	unselectWork: () => {
+		throw new Error('unselectWork() method not implemented.');
 	},
 	createWork: () => {
 		throw new Error('createWork() method not implemented.');
