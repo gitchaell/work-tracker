@@ -54,6 +54,10 @@ export const TaskForm = () => {
 		unselectTask();
 	}, []);
 
+	if (!workSelected) {
+		return null;
+	}
+
 	return (
 		<form className="flex flex-col gap-4" onSubmit={formik.handleSubmit}>
 			<div className="text-center text-xl font-medium text-white">Task Form</div>

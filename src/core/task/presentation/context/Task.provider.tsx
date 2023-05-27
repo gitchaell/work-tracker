@@ -1,32 +1,28 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
+import { Work } from '@/core/work/domain/Work.entity';
 import { Task } from '@/core/task/domain/Task.entity';
 import { TaskService } from '@/core/task/application/Task.service';
-import {
-	TaskInitialState,
-	TaskReducer,
-	TaskStateInitializer,
-} from '@/core/task/presentation/state/Task.state';
+import { TaskState } from '@/core/task/presentation/state/Task.state';
 import { TaskContext } from '@/core/task/presentation/context/Task.context';
 import { CreateTaskDTO, DeleteTaskDTO, FindTasksDTO, UpdateTaskDTO } from '@/core/task/domain/Task.dto';
 import { TaskCreatedEvent, TaskCreatedEventListener } from '@/core/task/application/events/TaskCreated.event';
 import { TaskUpdatedEvent, TaskUpdatedEventListener } from '@/core/task/application/events/TaskUpdated.event';
 import { TaskDeletedEvent, TaskDeletedEventListener } from '@/core/task/application/events/TaskDeleted.event';
 import { TaskTimedEvent, TaskTimedEventListener } from '@/core/task/application/events/TaskTimed.event';
-import { Work } from '@/core/work/domain/Work.entity';
 
 export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 	const [{ tasksTimed, taskSelected }, dispatch] = useReducer(
-		TaskReducer,
-		TaskInitialState,
-		TaskStateInitializer
+		TaskState.reducer,
+		TaskState.initialValues,
+		TaskState.initializer
 	);
 
 	const [tasks, setTasks] = useState([] as Task[]);
 
 	const findTasks = useCallback((params: FindTasksDTO) => {
 		const tasks = TaskService.findTasks(params);
-		setTasks(tasks);
+		setTasks(tasks.data);
 		return tasks;
 	}, []);
 
@@ -39,13 +35,15 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 	}, []);
 
 	const startTask = useCallback((task: Task, work: Work) => {
-		TaskService.startTask(task, work);
-		dispatch({ type: 'task/started', payload: task });
+		const taskStarted = TaskService.startTask(task, work);
+		dispatch({ type: 'task/started', payload: taskStarted.data });
+		return taskStarted;
 	}, []);
 
 	const stopTask = useCallback((task: Task) => {
-		TaskService.stopTask(task);
-		dispatch({ type: 'task/stopped', payload: task });
+		const taskStopped = TaskService.stopTask(task);
+		dispatch({ type: 'task/stopped', payload: taskStopped.data });
+		return taskStopped;
 	}, []);
 
 	const createTask = useCallback((task: CreateTaskDTO) => {
@@ -79,7 +77,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 		const handleTaskTimed: TaskTimedEventListener = (event) => {
 			const { task } = event.detail;
 			const taskUpdated = TaskService.updateTask(task);
-			setTasks((previous) => previous.map((t) => (t.id === taskUpdated.id ? taskUpdated : t)));
+			setTasks((previous) => previous.map((t) => (t.id === taskUpdated.data.id ? taskUpdated.data : t)));
 		};
 
 		TaskCreatedEvent.subscribe(handleTaskCreated);

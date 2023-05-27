@@ -1,10 +1,14 @@
 import { ValidationError } from '@/core/common/helpers/ErrorHandlers.helper';
-import { CreateTaskDTO, UpdateTaskDTO } from './Task.dto';
+import { CreateTaskDTO, DeleteTaskDTO, UpdateTaskDTO } from './Task.dto';
 
 export class CreateTaskValidation {
 	static execute(task: CreateTaskDTO) {
 		if (!task.description) {
 			throw new ValidationError('Task description is required');
+		}
+
+		if (task.description.length < 5) {
+			throw new ValidationError('Task description must be at least 5 characters long');
 		}
 
 		if (task.totalAmount < 0) {
@@ -41,6 +45,10 @@ export class UpdateTaskValidation {
 			throw new ValidationError('Task description is required');
 		}
 
+		if (task.description.length < 5) {
+			throw new ValidationError('Task description must be at least 5 characters long');
+		}
+
 		if (task.totalAmount < 0) {
 			throw new ValidationError('Task total amount must be greater than 0');
 		}
@@ -62,5 +70,13 @@ export class UpdateTaskValidation {
 		}
 
 		return true;
+	}
+}
+
+export class DeleteTaskValidation {
+	static execute(task: DeleteTaskDTO) {
+		if (!task.id) {
+			throw new ValidationError('Task id is required for delete');
+		}
 	}
 }

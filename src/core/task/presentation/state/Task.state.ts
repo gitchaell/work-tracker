@@ -17,7 +17,7 @@ export type TaskAction =
 export type TaskActionType = 'task/selected' | 'task/unselected' | 'task/started' | 'task/stopped';
 export type TaskActionPayload = Task | null;
 
-export const TaskReducer = (state: TaskState, action: TaskAction): TaskState => {
+const TaskStateReducer = (state: TaskState, action: TaskAction): TaskState => {
 	StateStorage.save<TaskActionType, TaskActionPayload>(action);
 
 	if (action.type === 'task/selected') {
@@ -43,14 +43,14 @@ export const TaskReducer = (state: TaskState, action: TaskAction): TaskState => 
 	return state;
 };
 
-export const TaskInitialState: TaskState = {
+const TaskInitialState: TaskState = {
 	tasksTimed: [],
 	taskSelected: null,
 	taskStarted: null,
 	taskStopped: null,
 };
 
-export const TaskStateInitializer = (state: TaskState) => {
+const TaskStateInitializer = (state: TaskState) => {
 	const taskState = StateStorage.value<TaskActionType, TaskActionPayload>();
 	const taskSelected = taskState.get('task/selected') || null;
 	const taskStarted = taskState.get('task/started') || null;
@@ -62,4 +62,10 @@ export const TaskStateInitializer = (state: TaskState) => {
 		taskStarted,
 		taskStopped,
 	};
+};
+
+export const TaskState = {
+	reducer: TaskStateReducer,
+	initialValues: TaskInitialState,
+	initializer: TaskStateInitializer,
 };

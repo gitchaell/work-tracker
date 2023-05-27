@@ -80,8 +80,8 @@ class Collection<T extends Entity> {
 		return list.find((item) => item.id === id) || null;
 	}
 
-	create(item: T): T {
-		const newItem = { ...item, id: UUID() };
+	create(item: Omit<T, 'id'>): T {
+		const newItem = { ...item, id: UUID() } as T;
 
 		const newList = [...this._get(), newItem];
 
@@ -89,7 +89,7 @@ class Collection<T extends Entity> {
 
 		Logger.success('database', `${this.name} created`, newItem);
 
-		return item;
+		return newItem;
 	}
 
 	update(item: T): T {
@@ -116,12 +116,12 @@ class Collection<T extends Entity> {
 		});
 	}
 
-	delete(item: T): T {
+	delete(item: Pick<T, 'id'>): T {
 		const list = this._get().filter(({ id }) => id !== item.id);
 
 		this._set(list);
 
-		return item;
+		return item as T;
 	}
 
 	deleteAll(): void {

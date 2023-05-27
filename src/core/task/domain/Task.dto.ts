@@ -1,25 +1,10 @@
-export interface CreateTaskDTO {
-	description: string;
-	totalSeconds: number;
-	totalAmount: number;
-	done: boolean;
-	status: 'paused' | 'running';
-	workId: string;
-}
+import { Task } from './Task.entity';
 
-export interface UpdateTaskDTO {
-	id: string;
-	description: string;
-	totalSeconds: number;
-	totalAmount: number;
-	done: boolean;
-	status: 'paused' | 'running';
-	workId: string;
-}
+export type CreateTaskDTO = Omit<Task, 'id'>;
 
-export interface DeleteTaskDTO {
-	id: string;
-}
+export type UpdateTaskDTO = Task;
+
+export type DeleteTaskDTO = Pick<Task, 'id'>;
 
 export interface FindTasksDTO {
 	status: 'all' | 'pending' | 'done';
