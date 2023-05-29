@@ -1,31 +1,18 @@
-import { Response } from '@/core/common/interfaces/Response.interface';
-import { ValidationError } from '@/core/common/helpers/ErrorHandlers.helper';
-
 import { TaskRepository } from '@/core/task/infrastructure/Task.repository';
+import { TaskMapper } from '@/core/task/infrastructure/Task.mapper';
 import { TaskDeletedEvent } from '@/core/task/application/events/TaskDeleted.event';
-import { TaskMapper } from '@/core/task/domain/Task.mapper';
-import { DeleteTaskValidation } from '@/core/task/domain/Task.validations';
-import { DeleteTaskDTO } from '@/core/task/domain/Task.dto';
-import { Task } from '@/core/task/domain/Task.entity';
+import { Task } from '@/core/task/domain/Task.model';
 
 export class DeleteTaskCommand {
-	static execute(task: DeleteTaskDTO): Response<Task | null> {
-		try {
-			const taskToDelete = TaskMapper.mapToDelete(task);
+	static execute(task: Task): Task {
+		const taskEntity = TaskMapper.toEntity(task);
 
-			DeleteTaskValidation.execute(taskToDelete);
+		const taskDeleted = TaskRepository.delete(taskEntity);
 
-			const taskDeleted = TaskRepository.delete(taskToDelete);
+		const taskModel = TaskMapper.toModel(taskDeleted);
 
-			TaskDeletedEvent.publish({ task: taskDeleted });
+		TaskDeletedEvent.publish({ task: taskModel });
 
-			return { data: taskDeleted };
-		} catch (error) {
-			if (error instanceof ValidationError) {
-				return { data: null, error: error.message };
-			}
-
-			return { data: null, error: 'Internal server error' };
-		}
+		return taskModel;
 	}
 }

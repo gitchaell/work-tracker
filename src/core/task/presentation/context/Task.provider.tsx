@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
-import { Work } from '@/core/work/domain/Work.entity';
-import { Task } from '@/core/task/domain/Task.entity';
-import { TaskService } from '@/core/task/application/Task.service';
-import { TaskState } from '@/core/task/presentation/state/Task.state';
-import { TaskContext } from '@/core/task/presentation/context/Task.context';
-import { CreateTaskDTO, DeleteTaskDTO, FindTasksDTO, UpdateTaskDTO } from '@/core/task/domain/Task.dto';
+import { Task } from '@/core/task/domain/Task.model';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
+import { FindTasksDTO } from '@/core/task/domain/dtos/FindTasks.dto';
 import { TaskCreatedEvent, TaskCreatedEventListener } from '@/core/task/application/events/TaskCreated.event';
 import { TaskUpdatedEvent, TaskUpdatedEventListener } from '@/core/task/application/events/TaskUpdated.event';
 import { TaskDeletedEvent, TaskDeletedEventListener } from '@/core/task/application/events/TaskDeleted.event';
-import { TaskTimedEvent, TaskTimedEventListener } from '@/core/task/application/events/TaskTimed.event';
+import { TaskTimedEvent } from '@/core/task/application/events/TaskTimed.event';
+import { TaskService } from '@/core/task/application/Task.service';
+import { TaskContext } from '@/core/task/presentation/context/Task.context';
+import { TaskState } from '@/core/task/presentation/state/Task.state';
 
 export const TaskProvider = ({ children }: { children: JSX.Element }) => {
-	const [{ tasksTimed, taskSelected }, dispatch] = useReducer(
+	const [{ taskSelected }, dispatch] = useReducer(
 		TaskState.reducer,
 		TaskState.initialValues,
 		TaskState.initializer
@@ -22,7 +22,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 
 	const findTasks = useCallback((params: FindTasksDTO) => {
 		const tasks = TaskService.findTasks(params);
-		setTasks(tasks.data);
+		setTasks(tasks);
 		return tasks;
 	}, []);
 
@@ -34,64 +34,57 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 		dispatch({ type: 'task/unselected', payload: null });
 	}, []);
 
-	const startTask = useCallback((task: Task, work: Work) => {
-		const taskStarted = TaskService.startTask(task, work);
-		dispatch({ type: 'task/started', payload: taskStarted.data });
-		return taskStarted;
+	const startTask = useCallback((task: Task) => {
+		return TaskService.startTask(task);
 	}, []);
 
 	const stopTask = useCallback((task: Task) => {
-		const taskStopped = TaskService.stopTask(task);
-		dispatch({ type: 'task/stopped', payload: taskStopped.data });
-		return taskStopped;
+		return TaskService.stopTask(task);
 	}, []);
 
-	const createTask = useCallback((task: CreateTaskDTO) => {
-		return TaskService.createTask(task);
+	const createTask = useCallback((task: TaskEntity) => {
+		const taskCreated = TaskService.createTask(task);
+		setTasks((previous) => [...previous, taskCreated]);
+		return taskCreated;
 	}, []);
 
-	const updateTask = useCallback((task: UpdateTaskDTO) => {
-		return TaskService.updateTask(task);
+	const updateTask = useCallback((task: TaskEntity) => {
+		const taskUpdated = TaskService.updateTask(task);
+		setTasks((previous) => previous.map((task) => (task.id === taskUpdated.id ? taskUpdated : task)));
+		return taskUpdated;
 	}, []);
 
-	const deleteTask = useCallback((task: DeleteTaskDTO) => {
-		return TaskService.deleteTask(task);
+	const deleteTask = useCallback((task: Task) => {
+		const taskDeleted = TaskService.deleteTask(task);
+		setTasks((previous) => previous.filter((task) => task.id !== taskDeleted.id));
+		return taskDeleted;
 	}, []);
 
 	useEffect(() => {
 		const handleTaskCreated: TaskCreatedEventListener = (event) => {
-			const { task } = event.detail;
-			setTasks((previous) => [...previous, task]);
+			createTask(event.detail.task);
 		};
 
 		const handleTaskUpdated: TaskUpdatedEventListener = (event) => {
-			const { task } = event.detail;
-			setTasks((previous) => previous.map((t) => (t.id === task.id ? task : t)));
+			updateTask(event.detail.task);
 		};
 
 		const handleTaskDeleted: TaskDeletedEventListener = (event) => {
-			const { task } = event.detail;
-			setTasks((previous) => previous.filter((t) => t.id !== task.id));
-		};
-
-		const handleTaskTimed: TaskTimedEventListener = (event) => {
-			const { task } = event.detail;
-			const taskUpdated = TaskService.updateTask(task);
-			setTasks((previous) => previous.map((t) => (t.id === taskUpdated.data.id ? taskUpdated.data : t)));
+			deleteTask(event.detail.task);
 		};
 
 		TaskCreatedEvent.subscribe(handleTaskCreated);
 		TaskUpdatedEvent.subscribe(handleTaskUpdated);
 		TaskDeletedEvent.subscribe(handleTaskDeleted);
 
-		TaskTimedEvent.subscribe(handleTaskTimed);
+		TaskTimedEvent.subscribe(handleTaskUpdated);
 
 		return () => {
 			TaskCreatedEvent.unsubscribe(handleTaskCreated);
 			TaskUpdatedEvent.unsubscribe(handleTaskUpdated);
 			TaskDeletedEvent.unsubscribe(handleTaskDeleted);
 
-			TaskTimedEvent.unsubscribe(handleTaskTimed);
+			TaskTimedEvent.unsubscribe(handleTaskUpdated);
 		};
 	}, []);
 
@@ -99,7 +92,6 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 		<TaskContext.Provider
 			value={{
 				tasks,
-				tasksTimed,
 				taskSelected,
 				selectTask,
 				unselectTask,

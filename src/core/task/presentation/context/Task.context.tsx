@@ -1,51 +1,48 @@
 import { createContext } from 'react';
-
-import { Response } from '@/core/common/interfaces/Response.interface';
 import { NotImplementedError } from '@/core/common/helpers/ErrorHandlers.helper';
-import { Task } from '@/core/task/domain/Task.entity';
-import { CreateTaskDTO, DeleteTaskDTO, FindTasksDTO, UpdateTaskDTO } from '@/core/task/domain/Task.dto';
-import { Work } from '@/core/work/domain/Work.entity';
+
+import { Task } from '@/core/task/domain/Task.model';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
+import { FindTasksDTO } from '@/core/task/domain/dtos/FindTasks.dto';
 
 interface TaskContextProps {
 	tasks: Task[];
-	tasksTimed: Task[];
 	taskSelected: Task | null;
 	selectTask: (task: Task) => void;
 	unselectTask: () => void;
-	createTask: (task: CreateTaskDTO) => Response<Task | null>;
-	updateTask: (task: UpdateTaskDTO) => Response<Task | null>;
-	deleteTask: (task: DeleteTaskDTO) => Response<Task | null>;
-	startTask: (task: Task, work: Work) => Response<Task>;
-	stopTask: (task: Task) => Response<Task>;
-	findTasks: (params: FindTasksDTO) => Response<Task[]>;
+	createTask: (task: TaskEntity) => Task;
+	updateTask: (task: TaskEntity) => Task;
+	deleteTask: (task: Task) => Task;
+	startTask: (task: Task) => Task;
+	stopTask: (task: Task) => Task;
+	findTasks: (params: FindTasksDTO) => Task[];
 }
 
 export const TaskContext = createContext<TaskContextProps>({
 	tasks: [],
-	tasksTimed: [],
 	taskSelected: null,
 	findTasks: () => {
-		throw new NotImplementedError('findTasks() method not implemented.');
+		throw new NotImplementedError('TaskContext.findTasks() method not implemented.');
 	},
 	selectTask: () => {
-		throw new NotImplementedError('selectTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.selectTask() method not implemented.');
 	},
 	unselectTask: () => {
-		throw new NotImplementedError('unselectTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.unselectTask() method not implemented.');
 	},
 	startTask: () => {
-		throw new NotImplementedError('startTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.startTask() method not implemented.');
 	},
 	stopTask: () => {
-		throw new NotImplementedError('stopTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.stopTask() method not implemented.');
 	},
 	createTask: () => {
-		throw new NotImplementedError('createTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.createTask() method not implemented.');
 	},
 	updateTask: () => {
-		throw new NotImplementedError('updateTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.updateTask() method not implemented.');
 	},
 	deleteTask: () => {
-		throw new NotImplementedError('deleteTask() method not implemented.');
+		throw new NotImplementedError('TaskContext.deleteTask() method not implemented.');
 	},
 });

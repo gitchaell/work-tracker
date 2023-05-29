@@ -1,4 +1,4 @@
 import { DatabaseStorage } from '@/core/common/helpers/DatabaseStorage.helper';
-import { Task } from '@/core/task/domain/Task.entity';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 
-export const TaskRepository = DatabaseStorage.getCollection<Task>('Tasks');
+export const TaskRepository = DatabaseStorage.getCollection<TaskEntity>('Tasks');

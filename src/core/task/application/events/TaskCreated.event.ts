@@ -1,7 +1,7 @@
 import { EventStorage } from '@/core/common/helpers/EventStorage.helper';
-import { Task } from '@/core/task/domain/Task.entity';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 
-export type TaskCreatedEventDetail = { task: Task };
+export type TaskCreatedEventDetail = { task: TaskEntity };
 export type TaskCreatedEventListener = (event: CustomEvent<TaskCreatedEventDetail>) => void;
 
 export class TaskCreatedEvent {

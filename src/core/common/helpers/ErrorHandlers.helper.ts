@@ -11,3 +11,10 @@ export class NotImplementedError extends Error {
 		this.name = 'NotImplementedError';
 	}
 }
+
+export class NotFoundError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'NotFoundError';
+	}
+}

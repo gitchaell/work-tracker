@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
 import { TaskContext } from '@/core/task/presentation/context/Task.context';
-import { Task } from '@/core/task/domain/Task.entity';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 import { WorkContext } from '@/core/work/presentation/context/Work.context';
 
 const TaskValidationSchema = Yup.object().shape({
@@ -19,22 +19,22 @@ export const TaskForm = () => {
 	const { taskSelected, createTask, updateTask, deleteTask, unselectTask } = useContext(TaskContext);
 	const navigate = useNavigate();
 
-	const formik = useFormik<Task>({
+	const formik = useFormik<TaskEntity>({
 		initialValues: {
-			id: taskSelected ? taskSelected.id : '',
-			description: taskSelected ? taskSelected.description : '',
-			totalAmount: taskSelected ? taskSelected.totalAmount : 0,
-			totalSeconds: taskSelected ? taskSelected.totalSeconds : 0,
-			done: taskSelected ? taskSelected.done : false,
-			status: taskSelected ? taskSelected.status : 'paused',
-			workId: workSelected ? workSelected.id : '',
+			id: taskSelected ? taskSelected.id.get() : '',
+			description: taskSelected ? taskSelected.description.get() : '',
+			seconds: taskSelected ? taskSelected.seconds.get() : 0,
+			amount: taskSelected ? taskSelected.amount.get() : 0,
+			done: taskSelected ? taskSelected.done.get() : false,
+			status: taskSelected ? taskSelected.status.get() : 'paused',
+			workId: workSelected ? workSelected.id.get() : '',
 		},
 		validationSchema: TaskValidationSchema,
-		onSubmit: (taskData) => {
-			if (taskData.id) {
-				updateTask(taskData);
+		onSubmit: (task: TaskEntity) => {
+			if (task.id) {
+				updateTask(task);
 			} else {
-				createTask(taskData);
+				createTask(task);
 			}
 			navigate('/home');
 			unselectTask();
@@ -43,7 +43,7 @@ export const TaskForm = () => {
 
 	const handleDeleteWork = useCallback(() => {
 		if (taskSelected) {
-			deleteTask({ id: taskSelected.id });
+			deleteTask(taskSelected);
 			navigate('/home');
 			unselectTask();
 		}

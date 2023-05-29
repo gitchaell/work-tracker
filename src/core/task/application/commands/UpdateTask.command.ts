@@ -1,31 +1,17 @@
-import { Response } from '@/core/common/interfaces/Response.interface';
-import { ValidationError } from '@/core/common/helpers/ErrorHandlers.helper';
-
-import { UpdateTaskDTO } from '@/core/task/domain/Task.dto';
 import { TaskRepository } from '@/core/task/infrastructure/Task.repository';
-import { TaskMapper } from '@/core/task/domain/Task.mapper';
+import { TaskMapper } from '@/core/task/infrastructure/Task.mapper';
 import { TaskUpdatedEvent } from '@/core/task/application/events/TaskUpdated.event';
-import { Task } from '@/core/task/domain/Task.entity';
-import { UpdateTaskValidation } from '@/core/task/domain/Task.validations';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
+import { Task } from '@/core/task/domain/Task.model';
 
 export class UpdateTaskCommand {
-	static execute(task: UpdateTaskDTO): Response<Task | null> {
-		try {
-			const taskToUpdate = TaskMapper.mapToUpdate(task);
+	static execute(task: TaskEntity): Task {
+		const taskUpdated = TaskRepository.update(task);
 
-			UpdateTaskValidation.execute(taskToUpdate);
+		const taskModel = TaskMapper.toModel(taskUpdated);
 
-			const taskUpdated = TaskRepository.update(taskToUpdate);
+		TaskUpdatedEvent.publish({ task: taskUpdated });
 
-			TaskUpdatedEvent.publish({ task: taskUpdated });
-
-			return { data: taskUpdated };
-		} catch (error) {
-			if (error instanceof ValidationError) {
-				return { data: null, error: error.message };
-			}
-
-			return { data: null, error: 'Internal server error' };
-		}
+		return taskModel;
 	}
 }

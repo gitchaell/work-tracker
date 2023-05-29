@@ -1,4 +1,4 @@
-export interface Currency {
+export interface CurrencyEntity {
 	id: string;
 	name: string;
 	code: string;
