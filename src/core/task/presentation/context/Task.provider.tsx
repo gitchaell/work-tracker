@@ -28,7 +28,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 		return tasks;
 	}, []);
 
-	const selectTask = useCallback((task: TaskEntity | Task) => {
+	const selectTask = useCallback((task: Task | TaskEntity) => {
 		if (task instanceof Task) {
 			task = TaskMapper.toEntity(task);
 		}
@@ -40,55 +40,35 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 		dispatch({ type: 'task/unselected', payload: null });
 	}, []);
 
-	const startTask = useCallback((task: TaskEntity | Task) => {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
-		}
-
+	const startTask = useCallback((task: Task | TaskEntity) => {
 		const taskStarted = TaskService.startTask(task);
 		const taskModel = TaskMapper.toModel(taskStarted);
 
 		return taskModel;
 	}, []);
 
-	const stopTask = useCallback((task: TaskEntity | Task) => {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
-		}
-
+	const stopTask = useCallback((task: Task | TaskEntity) => {
 		const taskStopped = TaskService.stopTask(task);
 		const taskModel = TaskMapper.toModel(taskStopped);
 
 		return taskModel;
 	}, []);
 
-	const createTask = useCallback((task: TaskEntity | Task) => {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
-		}
-
+	const createTask = useCallback((task: Task | TaskEntity) => {
 		const taskCreated = TaskService.createTask(task);
 		const taskModel = TaskMapper.toModel(taskCreated);
 
 		return taskModel;
 	}, []);
 
-	const updateTask = useCallback((task: TaskEntity | Task) => {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
-		}
-
+	const updateTask = useCallback((task: Task | TaskEntity) => {
 		const taskUpdated = TaskService.updateTask(task);
 		const taskModel = TaskMapper.toModel(taskUpdated);
 
 		return taskModel;
 	}, []);
 
-	const deleteTask = useCallback((task: TaskEntity | Task) => {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
-		}
-
+	const deleteTask = useCallback((task: Task | TaskEntity) => {
 		const taskDeleted = TaskService.deleteTask(task);
 		const taskModel = TaskMapper.toModel(taskDeleted);
 

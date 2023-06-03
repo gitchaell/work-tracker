@@ -34,10 +34,6 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 	}, []);
 
 	const createWork = useCallback((work: Work | WorkEntity) => {
-		if (work instanceof Work) {
-			work = WorkMapper.toEntity(work);
-		}
-
 		const workCreated = WorkService.createWork(work);
 		const workModel = WorkMapper.toModel(workCreated);
 
@@ -45,10 +41,6 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 	}, []);
 
 	const updateWork = useCallback((work: Work | WorkEntity) => {
-		if (work instanceof Work) {
-			work = WorkMapper.toEntity(work);
-		}
-
 		const workUpdated = WorkService.updateWork(work);
 		const workModel = WorkMapper.toModel(workUpdated);
 
@@ -56,10 +48,6 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 	}, []);
 
 	const deleteWork = useCallback((work: Work | WorkEntity) => {
-		if (work instanceof Work) {
-			work = WorkMapper.toEntity(work);
-		}
-
 		const workDeleted = WorkService.deleteWork(work);
 		const workModel = WorkMapper.toModel(workDeleted);
 

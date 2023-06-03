@@ -30,26 +30,32 @@ export class Task {
 		this.timer = new TaskTimer();
 	}
 
+	private onStart = (callback: (task: Task) => void) => {
+		this.status.set('running');
+		callback(this);
+	};
+
+	private onTick = (callback: (task: Task) => void) => {
+		this.seconds.add(1);
+		this.amount.add(this.work.rate.perSecond.get());
+		callback(this);
+	};
+
+	private onStop = (callback: (task: Task) => void) => {
+		this.status.set('paused');
+		callback(this);
+	};
+
 	start(callback: (task: Task) => void): void {
 		this.timer.start({
-			onStart: () => {
-				this.status.set('running');
-				callback(this);
-			},
-			onTick: () => {
-				this.seconds.add(1);
-				this.amount.add(this.work.rate.perSecond.get());
-				callback(this);
-			},
+			onStart: () => this.onStart(callback),
+			onTick: () => this.onTick(callback),
 		});
 	}
 
 	stop(callback: (task: Task) => void): void {
 		this.timer.stop({
-			onStop: () => {
-				this.status.set('paused');
-				callback(this);
-			},
+			onStop: () => this.onStop(callback),
 		});
 	}
 
