@@ -1,63 +1,97 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
-import { Work } from '@/core/work/domain/Work.entity';
+import { Work } from '@/core/work/domain/Work.model';
 import { WorkService } from '@/core/work/application/Work.service';
-import {
-	WorkInitialState,
-	WorkReducer,
-	WorkStateInitializer,
-} from '@/core/work/presentation/state/Work.state';
+import { WorkState } from '@/core/work/presentation/state/Work.state';
 import { WorkContext } from '@/core/work/presentation/context/Work.context';
-import { CreateWorkDTO, DeleteWorkDTO, UpdateWorkDTO } from '@/core/work/domain/Work.dto';
-import { WorkCreatedEvent } from '@/core/work/application/events/WorkCreated.event';
-import { WorkUpdatedEvent } from '@/core/work/application/events/WorkUpdated.event';
-import { WorkDeletedEvent } from '@/core/work/application/events/WorkDeleted.event';
+import { WorkCreatedEvent, WorkCreatedEventListener } from '@/core/work/application/events/WorkCreated.event';
+import { WorkUpdatedEvent, WorkUpdatedEventListener } from '@/core/work/application/events/WorkUpdated.event';
+import { WorkDeletedEvent, WorkDeletedEventListener } from '@/core/work/application/events/WorkDeleted.event';
+import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
+import { WorkMapper } from '@/core/work/infrastructure/Work.mapper';
 
 export const WorkProvider = ({ children }: { children: JSX.Element }) => {
-	const [{ workSelected }, dispatch] = useReducer(WorkReducer, WorkInitialState, WorkStateInitializer);
+	const [{ workSelected }, dispatch] = useReducer(
+		WorkState.reducer,
+		WorkState.initialState,
+		WorkState.initializer
+	);
 
-	const [works, setWorks] = useState([] as Work[]);
+	const [works, setWorks] = useState(WorkService.findWorks().map(WorkMapper.toModel));
 
 	const findWorks = useCallback(() => {
-		const works = WorkService.findWorks();
+		const works = WorkService.findWorks().map(WorkMapper.toModel);
 		setWorks(works);
 		return works;
 	}, []);
 
 	const selectWork = useCallback((work: Work) => {
-		dispatch({ type: 'work/selected', payload: work });
+		dispatch({ type: 'work/selected', payload: WorkMapper.toEntity(work) });
 	}, []);
 
 	const unselectWork = useCallback(() => {
 		dispatch({ type: 'work/unselected', payload: null });
 	}, []);
 
-	const createWork = useCallback((work: CreateWorkDTO) => {
-		return WorkService.createWork(work);
+	const createWork = useCallback((work: Work | WorkEntity) => {
+		if (work instanceof Work) {
+			work = WorkMapper.toEntity(work);
+		}
+
+		const workCreated = WorkService.createWork(work);
+		const workModel = WorkMapper.toModel(workCreated);
+
+		return workModel;
 	}, []);
 
-	const updateWork = useCallback((work: UpdateWorkDTO) => {
-		return WorkService.updateWork(work);
+	const updateWork = useCallback((work: Work | WorkEntity) => {
+		if (work instanceof Work) {
+			work = WorkMapper.toEntity(work);
+		}
+
+		const workUpdated = WorkService.updateWork(work);
+		const workModel = WorkMapper.toModel(workUpdated);
+
+		return workModel;
 	}, []);
 
-	const deleteWork = useCallback((work: DeleteWorkDTO) => {
-		return WorkService.deleteWork(work);
+	const deleteWork = useCallback((work: Work | WorkEntity) => {
+		if (work instanceof Work) {
+			work = WorkMapper.toEntity(work);
+		}
+
+		const workDeleted = WorkService.deleteWork(work);
+		const workModel = WorkMapper.toModel(workDeleted);
+
+		return workModel;
 	}, []);
 
 	useEffect(() => {
-		const handleWorkManipulation = () => {
-			const works = WorkService.findWorks();
-			setWorks(works);
+		const handleWorkCreated: WorkCreatedEventListener = (event) => {
+			const workModel = WorkMapper.toModel(event.detail.work);
+			setWorks((previous) => [...previous, workModel]);
 		};
 
-		WorkCreatedEvent.subscribe(handleWorkManipulation);
-		WorkUpdatedEvent.subscribe(handleWorkManipulation);
-		WorkDeletedEvent.subscribe(handleWorkManipulation);
+		const handleWorkUpdated: WorkUpdatedEventListener = (event) => {
+			const workModel = WorkMapper.toModel(event.detail.work);
+			setWorks((previous) =>
+				previous.map((work) => (work.id.get() === workModel.id.get() ? workModel : work))
+			);
+		};
+
+		const handleWorkDeleted: WorkDeletedEventListener = (event) => {
+			const workModel = WorkMapper.toModel(event.detail.work);
+			setWorks((previous) => previous.filter((work) => work.id.get() !== workModel.id.get()));
+		};
+
+		WorkCreatedEvent.subscribe(handleWorkCreated);
+		WorkUpdatedEvent.subscribe(handleWorkUpdated);
+		WorkDeletedEvent.subscribe(handleWorkDeleted);
 
 		return () => {
-			WorkCreatedEvent.unsubscribe(handleWorkManipulation);
-			WorkUpdatedEvent.unsubscribe(handleWorkManipulation);
-			WorkDeletedEvent.unsubscribe(handleWorkManipulation);
+			WorkCreatedEvent.unsubscribe(handleWorkCreated);
+			WorkUpdatedEvent.unsubscribe(handleWorkUpdated);
+			WorkDeletedEvent.unsubscribe(handleWorkDeleted);
 		};
 	}, []);
 
@@ -65,7 +99,7 @@ export const WorkProvider = ({ children }: { children: JSX.Element }) => {
 		<WorkContext.Provider
 			value={{
 				works,
-				workSelected,
+				workSelected: workSelected ? WorkMapper.toModel(workSelected) : null,
 				findWorks,
 				selectWork,
 				unselectWork,

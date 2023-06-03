@@ -11,4 +11,5 @@ export class TaskService {
 	static deleteTask = DeleteTaskCommand.execute;
 	static startTask = TimeTaskCommand.startTask;
 	static stopTask = TimeTaskCommand.stopTask;
+	static stopAllTasks = TimeTaskCommand.stopAllTasks;
 }

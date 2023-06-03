@@ -4,7 +4,6 @@ import { TaskSeconds } from '@/core/task/domain/value-objects/TaskSeconds.value'
 import { TaskAmount } from '@/core/task/domain/value-objects/TaskAmount.value';
 import { TaskDone } from '@/core/task/domain/value-objects/TaskDone.value';
 import { TaskStatus } from '@/core/task/domain/value-objects/TaskStatus.value';
-import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 import { TaskTimer } from '@/core/task/domain/value-objects/TaskTimer.value';
 import { Work } from '@/core/work/domain/Work.model';
 
@@ -18,21 +17,6 @@ export class Task {
 	work: Work;
 
 	timer: TaskTimer;
-
-	static from(entity: TaskEntity, work: Work): Task {
-		const task = new Task();
-
-		task.id.set(entity.id);
-		task.description.set(entity.description);
-		task.seconds.set(entity.seconds);
-		task.amount.set(entity.amount);
-		task.done.set(entity.done);
-		task.status.set(entity.status);
-
-		task.setWork(work);
-
-		return task;
-	}
 
 	constructor() {
 		this.id = new TaskId();

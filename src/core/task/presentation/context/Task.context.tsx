@@ -8,13 +8,13 @@ import { FindTasksDTO } from '@/core/task/domain/dtos/FindTasks.dto';
 interface TaskContextProps {
 	tasks: Task[];
 	taskSelected: Task | null;
-	selectTask: (task: Task) => void;
+	selectTask: (task: TaskEntity | Task) => void;
 	unselectTask: () => void;
-	createTask: (task: TaskEntity) => Task;
-	updateTask: (task: TaskEntity) => Task;
-	deleteTask: (task: Task) => Task;
-	startTask: (task: Task) => Task;
-	stopTask: (task: Task) => Task;
+	createTask: (task: TaskEntity | Task) => Task;
+	updateTask: (task: TaskEntity | Task) => Task;
+	deleteTask: (task: TaskEntity | Task) => Task;
+	startTask: (task: TaskEntity | Task) => Task;
+	stopTask: (task: TaskEntity | Task) => Task;
 	findTasks: (params: FindTasksDTO) => Task[];
 }
 

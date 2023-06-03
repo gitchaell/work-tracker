@@ -1,16 +1,16 @@
 import { StateStorage } from '@/core/common/helpers/StateStorage.helper';
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
 export interface GeolocationState {
-	geolocationSaved: Geolocation | null;
+	geolocationSaved: GeolocationEntity | null;
 }
 
-export type GeolocationAction = { type: 'geolocation/saved'; payload: Geolocation };
+export type GeolocationAction = { type: 'geolocation/saved'; payload: GeolocationEntity };
 
 export type GeolocationActionType = 'geolocation/saved';
-export type GeolocationActionPayload = Geolocation | null;
+export type GeolocationActionPayload = GeolocationEntity | null;
 
-export const GeolocationReducer = (state: GeolocationState, action: GeolocationAction): GeolocationState => {
+const GeolocationReducer = (state: GeolocationState, action: GeolocationAction): GeolocationState => {
 	StateStorage.save<GeolocationActionType, GeolocationActionPayload>(action);
 
 	if (action.type === 'geolocation/saved') {
@@ -20,11 +20,11 @@ export const GeolocationReducer = (state: GeolocationState, action: GeolocationA
 	return state;
 };
 
-export const GeolocationInitialState: GeolocationState = {
+const GeolocationInitialState: GeolocationState = {
 	geolocationSaved: null,
 };
 
-export const GeolocationStateInitializer = (state: GeolocationState) => {
+const GeolocationStateInitializer = (state: GeolocationState) => {
 	const geolocationState = StateStorage.value<GeolocationActionType, GeolocationActionPayload>();
 	const geolocationSaved = geolocationState.get('geolocation/saved') || null;
 
@@ -32,4 +32,10 @@ export const GeolocationStateInitializer = (state: GeolocationState) => {
 		...state,
 		geolocationSaved,
 	};
+};
+
+export const GeolocationState = {
+	reducer: GeolocationReducer,
+	initialState: GeolocationInitialState,
+	initializer: GeolocationStateInitializer,
 };

@@ -1,19 +1,18 @@
 import { StateStorage } from '@/core/common/helpers/StateStorage.helper';
-import { Currency } from '@/core/currency/domain/Currency.entity';
-import { CurrencyRepository } from '@/core/currency/infrastructure/Currency.repository';
+import { CurrencyEntity } from '@/core/currency/domain/entities/Currency.entity';
 
 export interface CurrencyState {
-	currencySelected: Currency | null;
+	currencySelected: CurrencyEntity | null;
 }
 
 export type CurrencyAction =
-	| { type: 'currency/selected'; payload: Currency }
+	| { type: 'currency/selected'; payload: CurrencyEntity }
 	| { type: 'currency/unselected'; payload: null };
 
 export type CurrencyActionType = 'currency/selected' | 'currency/unselected';
-export type CurrencyActionPayload = Currency | null;
+export type CurrencyActionPayload = CurrencyEntity | null;
 
-export const CurrencyReducer = (state: CurrencyState, action: CurrencyAction): CurrencyState => {
+const CurrencyReducer = (state: CurrencyState, action: CurrencyAction): CurrencyState => {
 	StateStorage.save<CurrencyActionType, CurrencyActionPayload>(action);
 
 	if (action.type === 'currency/unselected') {
@@ -27,15 +26,13 @@ export const CurrencyReducer = (state: CurrencyState, action: CurrencyAction): C
 	return state;
 };
 
-export const CurrencyInitialState: CurrencyState = {
+const CurrencyInitialState: CurrencyState = {
 	currencySelected: null,
 };
 
-export const CurrencyStateInitializer = (state: CurrencyState) => {
+const CurrencyStateInitializer = (state: CurrencyState) => {
 	const currencyState = StateStorage.value<CurrencyActionType, CurrencyActionPayload>();
-	const currencySelected =
-		currencyState.get('currency/selected') ||
-		CurrencyRepository.findById('8ea4c831-b37b-4f1c-abe4-12361dd890f5');
+	const currencySelected = currencyState.get('currency/selected') || null;
 
 	StateStorage.save<CurrencyActionType, CurrencyActionPayload>({
 		type: 'currency/selected',
@@ -46,4 +43,10 @@ export const CurrencyStateInitializer = (state: CurrencyState) => {
 		...state,
 		currencySelected,
 	};
+};
+
+export const CurrencyState = {
+	reducer: CurrencyReducer,
+	initialState: CurrencyInitialState,
+	initializer: CurrencyStateInitializer,
 };

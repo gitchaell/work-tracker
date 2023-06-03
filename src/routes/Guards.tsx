@@ -3,11 +3,11 @@ import { useLocation, Navigate } from 'react-router-dom';
 
 import { GeolocationContext } from '@/core/geolocation/presentation/context/Geolocation.context';
 
-export const CheckInGuard = ({ children }: { children: JSX.Element }) => {
-	const { findGeolocation } = useContext(GeolocationContext);
+export const RequireGeolocationGuard = ({ children }: { children: JSX.Element }) => {
+	const { geolocationSaved } = useContext(GeolocationContext);
 	const location = useLocation();
 
-	if (findGeolocation() === null) {
+	if (!geolocationSaved) {
 		return <Navigate to="/geolocation/form" state={{ from: location }} replace />;
 	}
 

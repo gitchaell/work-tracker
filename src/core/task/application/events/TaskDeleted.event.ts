@@ -1,7 +1,7 @@
 import { EventStorage } from '@/core/common/helpers/EventStorage.helper';
-import { Task } from '@/core/task/domain/Task.model';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 
-export type TaskDeletedEventDetail = { task: Task };
+export type TaskDeletedEventDetail = { task: TaskEntity };
 export type TaskDeletedEventListener = (event: CustomEvent<TaskDeletedEventDetail>) => void;
 
 export class TaskDeletedEvent {

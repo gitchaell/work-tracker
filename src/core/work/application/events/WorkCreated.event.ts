@@ -1,7 +1,7 @@
 import { EventStorage } from '@/core/common/helpers/EventStorage.helper';
-import { Work } from '@/core/work/domain/Work.entity';
+import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
 
-export type WorkCreatedEventDetail = { work: Work };
+export type WorkCreatedEventDetail = { work: WorkEntity };
 export type WorkCreatedEventListener = (event: CustomEvent<WorkCreatedEventDetail>) => void;
 
 export class WorkCreatedEvent {

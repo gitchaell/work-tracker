@@ -1,7 +1,7 @@
 import { EventStorage } from '@/core/common/helpers/EventStorage.helper';
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
-export type GeolocationSavedEventDetail = { geolocation: Geolocation };
+export type GeolocationSavedEventDetail = { geolocation: GeolocationEntity };
 export type GeolocationSavedEventListener = (event: CustomEvent<GeolocationSavedEventDetail>) => void;
 
 export class GeolocationSavedEvent {

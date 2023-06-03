@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
 import { GeolocationContext } from '@/core/geolocation/presentation/context/Geolocation.context';
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
 const GeolocationValidationSchema = Yup.object().shape({
 	id: Yup.string(),
@@ -18,54 +18,49 @@ const GeolocationValidationSchema = Yup.object().shape({
 });
 
 export const GeolocationForm = () => {
-	const { findGeolocation, fetchGeolocation, saveGeolocation } = useContext(GeolocationContext);
-	const [autoFilling, setAutoFilling] = useState(false);
+	const { geolocationSaved, fetchGeolocation, saveGeolocation } = useContext(GeolocationContext);
+
+	const [fetchingGeolocation, setFetchingGeolocation] = useState(false);
 
 	const navigate = useNavigate();
 
-	const formik = useFormik({
-		initialValues: findGeolocation() || {
-			id: '',
-			country: '',
-			state: '',
-			city: '',
-			address: '',
-			latitude: 0,
-			longitude: 0,
+	const formik = useFormik<GeolocationEntity>({
+		initialValues: {
+			id: geolocationSaved?.id.get() || '',
+			country: geolocationSaved?.country.get() || '',
+			state: geolocationSaved?.state.get() || '',
+			city: geolocationSaved?.city.get() || '',
+			address: geolocationSaved?.address.get() || '',
+			latitude: geolocationSaved?.latitude.get() || 0,
+			longitude: geolocationSaved?.longitude.get() || 0,
 		},
 		validationSchema: GeolocationValidationSchema,
-		onSubmit: (geolocationData) => {
-			saveGeolocation(geolocationData);
+		onSubmit: (geolocation) => {
+			saveGeolocation(geolocation);
 			navigate('/');
 		},
 	});
 
 	const handleAutoFillForm = useCallback(() => {
-		setAutoFilling(true);
+		setFetchingGeolocation(true);
 
-		fetchGeolocation().then((response) => {
-			const geolocation = formik.values as Geolocation;
+		fetchGeolocation().then((geolocation) => {
+			formik.setValues({
+				...formik.values,
+				country: geolocation.country.get() || formik.values.country,
+				state: geolocation.state.get() || formik.values.state,
+				city: geolocation.city.get() || formik.values.city,
+				address: geolocation.address.get() || formik.values.address,
+				latitude: geolocation.latitude.get() || formik.values.latitude,
+				longitude: geolocation.longitude.get() || formik.values.longitude,
+			});
 
-			const geolocationData = {
-				...geolocation,
-				...response,
-				id: geolocation.id,
-			};
-
-			formik.setValues(geolocationData);
-
-			setAutoFilling(false);
+			setFetchingGeolocation(false);
 		});
 	}, []);
 
 	const handleCancelForm = useCallback(() => {
 		navigate('/');
-	}, []);
-
-	useEffect(() => {
-		if (!formik.values.id) {
-			handleAutoFillForm();
-		}
 	}, []);
 
 	return (
@@ -84,7 +79,7 @@ export const GeolocationForm = () => {
 					placeholder="Bolivia"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -107,7 +102,7 @@ export const GeolocationForm = () => {
 					placeholder="Santa Cruz"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -130,7 +125,7 @@ export const GeolocationForm = () => {
 					placeholder="Santa Cruz de la Sierra"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -153,7 +148,7 @@ export const GeolocationForm = () => {
 					placeholder="Calle Rene Moreno"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -176,7 +171,7 @@ export const GeolocationForm = () => {
 					placeholder="0.000000000"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
@@ -199,7 +194,7 @@ export const GeolocationForm = () => {
 					placeholder="0.000000000"
 					required={true}
 					sizing="sm"
-					addon={autoFilling && <Spinner color="success" size="sm" />}
+					addon={fetchingGeolocation && <Spinner color="success" size="sm" />}
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}

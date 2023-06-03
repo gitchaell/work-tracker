@@ -1,33 +1,12 @@
-import { DefaultGeolocationDTO } from '@/core/geolocation/domain/Geolocation.dto';
-
-export class GeolocationAPI {
-	static async getGeolocation(): Promise<DefaultGeolocationDTO> {
-		const { coords } = await NavigatorGeolocationAPI.getCoords();
-
-		const response = await OpenStreetMapAPI.request(coords.latitude, coords.longitude);
-
-		return {
-			state: response.address.state,
-			country: response.address.country,
-			city: response.address.city,
-			address: response.display_name,
-			latitude: coords.latitude,
-			longitude: coords.longitude,
-		};
-	}
-}
-
 export interface NavigatorGeolocationAPIResponse {
-	coords: {
-		latitude: number;
-		longitude: number;
-	};
+	latitude: number;
+	longitude: number;
 }
 
 export class NavigatorGeolocationAPI {
 	static getCoords(): Promise<NavigatorGeolocationAPIResponse> {
 		return new Promise((resolve, reject) => {
-			navigator.geolocation.getCurrentPosition(resolve, reject, {
+			navigator.geolocation.getCurrentPosition(({ coords }) => resolve(coords), reject, {
 				enableHighAccuracy: true,
 				timeout: 5000,
 				maximumAge: 0,
@@ -56,8 +35,7 @@ export class OpenStreetMapAPI {
 	static URL = 'https://nominatim.openstreetmap.org/reverse';
 
 	static async request(latitude: number, longitude: number): Promise<OpenStreetMapAPIResponse> {
-		return fetch(`${OpenStreetMapAPI.URL}?format=json&lat=${latitude}&lon=${longitude}`).then((response) =>
-			response.json()
-		);
+		const endpoint = `${OpenStreetMapAPI.URL}?format=json&lat=${latitude}&lon=${longitude}`;
+		return fetch(endpoint).then((response) => response.json());
 	}
 }

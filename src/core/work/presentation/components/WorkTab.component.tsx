@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext } from 'react';
 import { Button, Dropdown } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 import { HiPlus } from '@react-icons/all-files/hi/HiPlus';
@@ -7,13 +7,9 @@ import { HiPencil } from '@react-icons/all-files/hi/HiPencil';
 import { WorkContext } from '@/core/work/presentation/context/Work.context';
 
 export const WorkTab = () => {
-	const { workSelected, works, findWorks, selectWork, unselectWork } = useContext(WorkContext);
+	const { workSelected, works, selectWork, unselectWork } = useContext(WorkContext);
 
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		findWorks();
-	}, []);
 
 	const handleAddWork = useCallback(() => {
 		unselectWork();
@@ -27,18 +23,18 @@ export const WorkTab = () => {
 	return (
 		<Button.Group>
 			<Dropdown
-				label={workSelected?.title || 'Select a Work'}
+				label={workSelected?.title.get() || 'Select a Work'}
 				color="dark"
 				size="sm"
 				title="Select a Work Profile"
 			>
 				{works.map((work) => (
 					<Dropdown.Item
-						key={work.id}
+						key={work.id.get()}
 						className="flex items-center justify-center gap-2"
 						onClick={() => selectWork(work)}
 					>
-						{work.title}
+						{work.title.get()}
 					</Dropdown.Item>
 				))}
 				<Dropdown.Item

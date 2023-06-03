@@ -1,6 +1,7 @@
 import { NotFoundError } from '@/core/common/helpers/ErrorHandlers.helper';
 import { Task } from '@/core/task/domain/Task.model';
 import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
+import { WorkMapper } from '@/core/work/infrastructure/Work.mapper';
 import { WorkRepository } from '@/core/work/infrastructure/Work.repository';
 
 export class TaskMapper {
@@ -23,6 +24,17 @@ export class TaskMapper {
 			throw new NotFoundError('Work related to Task not found');
 		}
 
-		return Task.from(taskEntity, work);
+		const task = new Task();
+
+		task.id.set(taskEntity.id);
+		task.description.set(taskEntity.description);
+		task.seconds.set(taskEntity.seconds);
+		task.amount.set(taskEntity.amount);
+		task.done.set(taskEntity.done);
+		task.status.set(taskEntity.status);
+
+		task.setWork(WorkMapper.toModel(work));
+
+		return task;
 	}
 }

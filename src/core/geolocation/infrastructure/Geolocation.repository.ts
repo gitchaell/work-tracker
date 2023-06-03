@@ -1,4 +1,4 @@
 import { DatabaseStorage } from '@/core/common/helpers/DatabaseStorage.helper';
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
-export const GeolocationRepository = DatabaseStorage.getCollection<Geolocation>('Geolocation');
+export const GeolocationRepository = DatabaseStorage.getCollection<GeolocationEntity>('Geolocation');

@@ -1,24 +1,25 @@
 import { createContext } from 'react';
 
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
-import { DefaultGeolocationDTO } from '@/core/geolocation/domain/Geolocation.dto';
+import { NotImplementedError } from '@/core/common/helpers/ErrorHandlers.helper';
+import { Geolocation } from '@/core/geolocation/domain/Geolocation.model';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
 interface GeolocationContextProps {
 	geolocationSaved: Geolocation | null;
 	findGeolocation: () => Geolocation | null;
-	fetchGeolocation: () => Promise<DefaultGeolocationDTO>;
-	saveGeolocation: (geolocation: Geolocation) => void;
+	fetchGeolocation: () => Promise<Geolocation>;
+	saveGeolocation: (geolocation: Geolocation | GeolocationEntity) => Geolocation;
 }
 
 export const GeolocationContext = createContext<GeolocationContextProps>({
 	geolocationSaved: null,
 	findGeolocation: () => {
-		throw new Error('findGeolocation() method not implemented.');
+		throw new NotImplementedError('findGeolocation() method not implemented.');
 	},
 	fetchGeolocation: () => {
-		throw new Error('fetchGeolocation() method not implemented.');
+		throw new NotImplementedError('fetchGeolocation() method not implemented.');
 	},
 	saveGeolocation: () => {
-		throw new Error('saveGeolocation() method not implemented.');
+		throw new NotImplementedError('saveGeolocation() method not implemented.');
 	},
 });

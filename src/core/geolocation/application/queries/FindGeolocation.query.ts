@@ -1,10 +1,10 @@
-import { Geolocation } from '@/core/geolocation/domain/Geolocation.entity';
 import { GeolocationRepository } from '@/core/geolocation/infrastructure/Geolocation.repository';
+import { GeolocationEntity } from '@/core/geolocation/domain/entities/Geolocation.entity';
 
 export class FindGeolocationQuery {
-	static execute(): Geolocation | null {
-		const allGeolocation = GeolocationRepository.findAll();
+	static execute(): GeolocationEntity | null {
+		const geolocationEntities = GeolocationRepository.findAll();
 
-		return allGeolocation.at(0) || null;
+		return geolocationEntities.at(0) || null;
 	}
 }

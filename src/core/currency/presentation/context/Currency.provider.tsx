@@ -1,35 +1,26 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
-import { Currency } from '@/core/currency/domain/Currency.entity';
+import { Currency } from '@/core/currency/domain/Currency.model';
 import { CurrencyService } from '@/core/currency/application/Currency.service';
-import {
-	CurrencyInitialState,
-	CurrencyReducer,
-	CurrencyStateInitializer,
-} from '@/core/currency/presentation/state/Currency.state';
+import { CurrencyState } from '@/core/currency/presentation/state/Currency.state';
 import { CurrencyContext } from '@/core/currency/presentation/context/Currency.context';
 import {
 	GeolocationSavedEvent,
 	GeolocationSavedEventListener,
 } from '@/core/geolocation/application/events/GeolocationSaved.event';
+import { CurrencyMapper } from '@/core/currency/infrastructure/Currency.mapper';
 
 export const CurrencyProvider = ({ children }: { children: JSX.Element }) => {
-	const [currencies, setCurrencies] = useState([] as Currency[]);
+	const [currencies] = useState(CurrencyService.findCurrencies().map(CurrencyMapper.toModel));
 
 	const [{ currencySelected }, dispatch] = useReducer(
-		CurrencyReducer,
-		CurrencyInitialState,
-		CurrencyStateInitializer
+		CurrencyState.reducer,
+		CurrencyState.initialState,
+		CurrencyState.initializer
 	);
 
-	const findCurrencies = useCallback(() => {
-		const currencies = CurrencyService.findCurrencies();
-		setCurrencies(currencies);
-		return currencies;
-	}, []);
-
 	const selectCurrency = useCallback((currency: Currency) => {
-		dispatch({ type: 'currency/selected', payload: currency });
+		dispatch({ type: 'currency/selected', payload: CurrencyMapper.toEntity(currency) });
 	}, []);
 
 	const unselectCurrency = useCallback(() => {
@@ -40,12 +31,10 @@ export const CurrencyProvider = ({ children }: { children: JSX.Element }) => {
 		const handleChangeGeolocation: GeolocationSavedEventListener = (event) => {
 			const { geolocation } = event.detail;
 
-			const currency = CurrencyService.findCurrencies().find((currency) =>
-				currency.countries.includes(geolocation.country)
-			);
+			const currency = CurrencyService.findCurrencyByCountry({ country: geolocation.country });
 
 			if (currency) {
-				selectCurrency(currency);
+				selectCurrency(CurrencyMapper.toModel(currency));
 			}
 		};
 
@@ -60,8 +49,7 @@ export const CurrencyProvider = ({ children }: { children: JSX.Element }) => {
 		<CurrencyContext.Provider
 			value={{
 				currencies,
-				currencySelected,
-				findCurrencies,
+				currencySelected: currencySelected ? CurrencyMapper.toModel(currencySelected) : null,
 				selectCurrency,
 				unselectCurrency,
 			}}

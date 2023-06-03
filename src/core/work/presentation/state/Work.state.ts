@@ -1,18 +1,18 @@
 import { StateStorage } from '@/core/common/helpers/StateStorage.helper';
-import { Work } from '@/core/work/domain/Work.entity';
+import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
 
 export interface WorkState {
-	workSelected: Work | null;
+	workSelected: WorkEntity | null;
 }
 
 export type WorkAction =
-	| { type: 'work/selected'; payload: Work }
+	| { type: 'work/selected'; payload: WorkEntity }
 	| { type: 'work/unselected'; payload: null };
 
 export type WorkActionType = 'work/selected' | 'work/unselected';
-export type WorkActionPayload = Work | null;
+export type WorkActionPayload = WorkEntity | null;
 
-export const WorkReducer = (state: WorkState, action: WorkAction): WorkState => {
+const WorkReducer = (state: WorkState, action: WorkAction): WorkState => {
 	StateStorage.save<WorkActionType, WorkActionPayload>(action);
 
 	if (action.type === 'work/selected') {
@@ -26,11 +26,11 @@ export const WorkReducer = (state: WorkState, action: WorkAction): WorkState => 
 	return state;
 };
 
-export const WorkInitialState: WorkState = {
+const WorkInitialState: WorkState = {
 	workSelected: null,
 };
 
-export const WorkStateInitializer = (state: WorkState) => {
+const WorkStateInitializer = (state: WorkState) => {
 	const workState = StateStorage.value<WorkActionType, WorkActionPayload>();
 	const workSelected = workState.get('work/selected') || null;
 
@@ -38,4 +38,10 @@ export const WorkStateInitializer = (state: WorkState) => {
 		...state,
 		workSelected,
 	};
+};
+
+export const WorkState = {
+	reducer: WorkReducer,
+	initialState: WorkInitialState,
+	initializer: WorkStateInitializer,
 };

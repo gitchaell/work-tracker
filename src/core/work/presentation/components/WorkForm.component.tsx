@@ -1,92 +1,105 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
-import { WorkExperienceYearsFactor, WorkMarketDemandFactor } from '@/core/work/domain/Work.constant';
-import { WorkContext } from '@/core/work/presentation/context/Work.context';
 import { CurrencyContext } from '@/core/currency/presentation/context/Currency.context';
-import { Work } from '@/core/work/domain/Work.entity';
+import { WorkContext } from '@/core/work/presentation/context/Work.context';
+import { WorkExperiences } from '@/core/work/domain/constants/WorkExperiences.constant';
+import { WorkDemands } from '@/core/work/domain/constants/WorkDemands.constant';
+import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
 
 const WorkValidationSchema = Yup.object().shape({
 	title: Yup.string().required('is required'),
 	minSalary: Yup.number().min(0, 'must be greater than 0').required('is required'),
-	experience: Yup.string().oneOf(Object.keys(WorkExperienceYearsFactor)).required('is required'),
-	marketDemand: Yup.string().oneOf(Object.keys(WorkMarketDemandFactor)).required('is required'),
-	indirectCostsMonthly: Yup.number().min(0, 'must be greater than 0').required('is required'),
-	profitMargin: Yup.number()
-		.min(0, 'must be greater than 0%')
-		.max(100, 'must be less than 100%')
-		.required('is required'),
-	workHoursPerDay: Yup.number()
-		.min(1, 'must be greater than 1 hour')
-		.max(24, 'must be less than 24 hours')
-		.required('is required'),
-	workDaysPerWeek: Yup.number()
-		.min(1, 'must be greater than 1 day')
-		.max(7, 'must be less than 7 days')
-		.required('is required'),
+	experience: Yup.string().oneOf(Object.keys(WorkExperiences)).required('is required'),
+	demand: Yup.string().oneOf(Object.keys(WorkDemands)).required('is required'),
+	costs: Yup.object().shape({
+		perMonth: Yup.number().min(0, 'must be greater than 0').required('is required'),
+	}),
+	profitMargin: Yup.object().shape({
+		perMonth: Yup.number()
+			.min(0, 'must be greater than 0%')
+			.max(100, 'must be less than 100%')
+			.required('is required'),
+	}),
+	workHours: Yup.object().shape({
+		perDay: Yup.number()
+			.min(1, 'must be greater than 1 hour')
+			.max(24, 'must be less than 24 hours')
+			.required('is required'),
+	}),
+	workDays: Yup.object().shape({
+		perWeek: Yup.number()
+			.min(1, 'must be greater than 1 day')
+			.max(7, 'must be less than 7 days')
+			.required('is required'),
+	}),
 });
 
 export const WorkForm = () => {
-	const { currencySelected, currencies, findCurrencies } = useContext(CurrencyContext);
+	const { currencySelected, currencies } = useContext(CurrencyContext);
 	const { workSelected, createWork, updateWork, deleteWork, selectWork, unselectWork } =
 		useContext(WorkContext);
 	const navigate = useNavigate();
 
-	const formik = useFormik<Work>({
+	const formik = useFormik<WorkEntity>({
 		initialValues: {
-			id: workSelected ? workSelected.id : '',
-			title: workSelected ? workSelected.title : '',
-			minSalary: workSelected ? workSelected.minSalary : 0,
-			experience: workSelected ? workSelected.experience : '0-1',
-			marketDemand: workSelected ? workSelected.marketDemand : 'Normal',
-			indirectCostsMonthly: workSelected ? workSelected.indirectCostsMonthly : 0,
-			profitMargin: workSelected ? workSelected.profitMargin : 0,
-			workHoursPerDay: workSelected ? workSelected.workHoursPerDay : 0,
-			workDaysPerWeek: workSelected ? workSelected.workDaysPerWeek : 0,
-			rate: {
-				perSecond: 0,
-				perMinute: 0,
-				perHour: 0,
-				perDay: 0,
-				perWeek: 0,
-				perMonth: 0,
-				perYear: 0,
+			id: workSelected?.id.get() || '',
+			title: workSelected?.title.get() || '',
+			minSalary: workSelected?.minSalary.get() || 0,
+			experience: workSelected?.experience.get() || '0-1',
+			demand: workSelected?.demand.get() || 'Normal',
+			costs: {
+				perMonth: workSelected?.costs.perMonth.get() || 0,
 			},
-			currencyId: currencySelected ? currencySelected.id : '',
-			date: workSelected ? workSelected.date : '',
+			profitMargin: {
+				perMonth: workSelected?.profitMargin.perMonth.get() || 0,
+			},
+			workHours: {
+				perDay: workSelected?.workHours.perDay.get() || 0,
+			},
+			workDays: {
+				perWeek: workSelected?.workDays.perWeek.get() || 0,
+			},
+			rate: {
+				perSecond: workSelected?.rate.perSecond.get() || 0,
+				perMinute: workSelected?.rate.perMinute.get() || 0,
+				perHour: workSelected?.rate.perHour.get() || 0,
+				perDay: workSelected?.rate.perDay.get() || 0,
+				perWeek: workSelected?.rate.perWeek.get() || 0,
+				perMonth: workSelected?.rate.perMonth.get() || 0,
+				perYear: workSelected?.rate.perYear.get() || 0,
+			},
+			currencyId: currencySelected?.id.get() || '',
+			createdAt: workSelected?.createdAt.get() || new Date().toISOString(),
 		},
 		validationSchema: WorkValidationSchema,
-		onSubmit: (workData) => {
+		onSubmit: (work) => {
 			let workSaved = null;
 
-			if (workSelected) {
-				workSaved = updateWork({ ...workSelected, ...workData, id: workSelected.id });
+			if (work.id) {
+				workSaved = updateWork(work);
 			} else {
-				workSaved = createWork(workData);
+				workSaved = createWork(work);
 			}
 
 			selectWork(workSaved);
-			navigate('/home');
+			navigate('/');
 		},
 	});
 
 	const handleDeleteWork = useCallback(() => {
 		if (workSelected) {
-			deleteWork({ id: workSelected.id });
+			deleteWork(workSelected);
 			unselectWork();
-			navigate('/home');
+			navigate('/');
 		}
-	}, []);
+	}, [workSelected]);
 
 	const handleCancelForm = useCallback(() => {
-		navigate('/home');
-	}, []);
-
-	useEffect(() => {
-		findCurrencies();
+		navigate('/');
 	}, []);
 
 	if (!currencySelected) {
@@ -112,19 +125,16 @@ export const WorkForm = () => {
 					}}
 					sizing="sm"
 					placeholder="BOB - Boliviano"
-					// addon={
-					// 	<CurrencyIcon code={currencies.find((c) => c.id === formik.values.currencyId)?.code || 'USD'} />
-					// }
 					value={formik.values.currencyId}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 				>
 					<option value=""></option>
-					{currencies.map(($currency) => (
+					{currencies.map((currency) => (
 						<option
-							key={$currency.id}
-							value={$currency.id}
-							label={$currency.code + ' - ' + $currency.name}
+							key={currency.id.get()}
+							value={currency.id.get()}
+							label={currency.code.get() + ' - ' + currency.name.get()}
 						></option>
 					))}
 				</Select>
@@ -196,7 +206,7 @@ export const WorkForm = () => {
 					>
 						<option value=""></option>
 
-						{Object.entries(WorkExperienceYearsFactor).map(([key]) => (
+						{Object.entries(WorkExperiences).map(([key]) => (
 							<option key={key} value={key} label={key}></option>
 						))}
 					</Select>
@@ -204,26 +214,26 @@ export const WorkForm = () => {
 
 				<div className="flex flex-grow flex-col gap-2">
 					<Label
-						htmlFor="marketDemand"
-						value={'Market Demand ' + (formik.errors.marketDemand || '')}
-						color={formik.errors.marketDemand && formik.touched.marketDemand ? 'failure' : 'default'}
+						htmlFor="demand"
+						value={'Market Demand ' + (formik.errors.demand || '')}
+						color={formik.errors.demand && formik.touched.demand ? 'failure' : 'default'}
 					/>
 					<Select
-						id="marketDemand"
+						id="demand"
 						required={true}
-						color={formik.errors.marketDemand && formik.touched.marketDemand ? 'failure' : 'default'}
+						color={formik.errors.demand && formik.touched.demand ? 'failure' : 'default'}
 						theme={{
 							field: { select: { base: 'bg-gray-800 text-white w-full' } },
 						}}
 						sizing="sm"
 						placeholder="Normal"
-						value={formik.values.marketDemand}
+						value={formik.values.demand}
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 					>
 						<option value=""></option>
 
-						{Object.entries(WorkMarketDemandFactor).map(([key]) => (
+						{Object.entries(WorkDemands).map(([key]) => (
 							<option key={key} value={key} label={key}></option>
 						))}
 					</Select>
@@ -232,14 +242,12 @@ export const WorkForm = () => {
 
 			<div className="flex flex-col gap-2">
 				<Label
-					htmlFor="indirectCostsMonthly"
-					value={'Indirect Costs (Monthly) ' + (formik.errors.indirectCostsMonthly || '')}
-					color={
-						formik.errors.indirectCostsMonthly && formik.touched.indirectCostsMonthly ? 'failure' : 'default'
-					}
+					htmlFor="costs.perMonth"
+					value={'Indirect Costs (Monthly) ' + (formik.errors.costs?.perMonth || '')}
+					color={formik.errors.costs?.perMonth && formik.touched.costs?.perMonth ? 'failure' : 'default'}
 				/>
 				<TextInput
-					id="indirectCostsMonthly"
+					id="costs.perMonth"
 					type="number"
 					placeholder="1300"
 					required={true}
@@ -247,10 +255,8 @@ export const WorkForm = () => {
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
-					color={
-						formik.errors.indirectCostsMonthly && formik.touched.indirectCostsMonthly ? 'failure' : 'default'
-					}
-					value={formik.values.indirectCostsMonthly}
+					color={formik.errors.costs?.perMonth && formik.touched.costs?.perMonth ? 'failure' : 'default'}
+					value={formik.values.costs.perMonth}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 				/>
@@ -258,12 +264,16 @@ export const WorkForm = () => {
 
 			<div className="flex flex-col gap-2">
 				<Label
-					htmlFor="profitMargin"
-					value={'Profit Margin (0 - 100%) ' + (formik.errors.profitMargin || '')}
-					color={formik.errors.profitMargin && formik.touched.profitMargin ? 'failure' : 'default'}
+					htmlFor="profitMargin.perMonth"
+					value={'Profit Margin (0 - 100%) ' + (formik.errors.profitMargin?.perMonth || '')}
+					color={
+						formik.errors.profitMargin?.perMonth && formik.touched.profitMargin?.perMonth
+							? 'failure'
+							: 'default'
+					}
 				/>
 				<TextInput
-					id="profitMargin"
+					id="profitMargin.perMonth"
 					type="number"
 					placeholder="0"
 					required={true}
@@ -271,8 +281,12 @@ export const WorkForm = () => {
 					theme={{
 						field: { input: { base: 'bg-gray-800 text-white w-full' } },
 					}}
-					color={formik.errors.profitMargin && formik.touched.profitMargin ? 'failure' : 'default'}
-					value={formik.values.profitMargin}
+					color={
+						formik.errors.profitMargin?.perMonth && formik.touched.profitMargin?.perMonth
+							? 'failure'
+							: 'default'
+					}
+					value={formik.values.profitMargin.perMonth}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 				/>
@@ -281,12 +295,14 @@ export const WorkForm = () => {
 			<div className="flex gap-2">
 				<div className="flex flex-grow flex-col gap-2">
 					<Label
-						htmlFor="workHoursPerDay"
-						value={'Work Hours (Daily) ' + (formik.errors.workHoursPerDay || '')}
-						color={formik.errors.workHoursPerDay && formik.touched.workHoursPerDay ? 'failure' : 'default'}
+						htmlFor="workHours.perDay"
+						value={'Work Hours (Daily) ' + (formik.errors.workHours?.perDay || '')}
+						color={
+							formik.errors.workHours?.perDay && formik.touched.workHours?.perDay ? 'failure' : 'default'
+						}
 					/>
 					<TextInput
-						id="workHoursPerDay"
+						id="workHours.perDay"
 						type="number"
 						placeholder="8"
 						required={true}
@@ -294,8 +310,10 @@ export const WorkForm = () => {
 						theme={{
 							field: { input: { base: 'bg-gray-800 text-white w-full' } },
 						}}
-						color={formik.errors.workHoursPerDay && formik.touched.workHoursPerDay ? 'failure' : 'default'}
-						value={formik.values.workHoursPerDay}
+						color={
+							formik.errors.workHours?.perDay && formik.touched.workHours?.perDay ? 'failure' : 'default'
+						}
+						value={formik.values.workHours.perDay}
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 					/>
@@ -303,12 +321,14 @@ export const WorkForm = () => {
 
 				<div className="flex flex-grow flex-col gap-2">
 					<Label
-						htmlFor="workDaysPerWeek"
-						value={'Work Days (Weekly) ' + (formik.errors.workDaysPerWeek || '')}
-						color={formik.errors.workDaysPerWeek && formik.touched.workDaysPerWeek ? 'failure' : 'default'}
+						htmlFor="workDays.perWeek"
+						value={'Work Days (Weekly) ' + (formik.errors.workDays?.perWeek || '')}
+						color={
+							formik.errors.workDays?.perWeek && formik.touched.workDays?.perWeek ? 'failure' : 'default'
+						}
 					/>
 					<TextInput
-						id="workDaysPerWeek"
+						id="workDays.perWeek"
 						type="number"
 						placeholder="5"
 						required={true}
@@ -316,8 +336,10 @@ export const WorkForm = () => {
 						theme={{
 							field: { input: { base: 'bg-gray-800 text-white w-full' } },
 						}}
-						color={formik.errors.workDaysPerWeek && formik.touched.workDaysPerWeek ? 'failure' : 'default'}
-						value={formik.values.workDaysPerWeek}
+						color={
+							formik.errors.workDays?.perWeek && formik.touched.workDays?.perWeek ? 'failure' : 'default'
+						}
+						value={formik.values.workDays.perWeek}
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 					/>

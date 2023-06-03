@@ -1,16 +1,16 @@
 import { StateStorage } from '@/core/common/helpers/StateStorage.helper';
-import { Task } from '@/core/task/domain/Task.model';
+import { TaskEntity } from '@/core/task/domain/entities/Task.entity';
 
 export interface TaskState {
-	taskSelected: Task | null;
+	taskSelected: TaskEntity | null;
 }
 
 export type TaskAction =
-	| { type: 'task/selected'; payload: Task }
+	| { type: 'task/selected'; payload: TaskEntity }
 	| { type: 'task/unselected'; payload: null };
 
 export type TaskActionType = 'task/selected' | 'task/unselected';
-export type TaskActionPayload = Task | null;
+export type TaskActionPayload = TaskEntity | null;
 
 const TaskStateReducer = (state: TaskState, action: TaskAction): TaskState => {
 	StateStorage.save<TaskActionType, TaskActionPayload>(action);

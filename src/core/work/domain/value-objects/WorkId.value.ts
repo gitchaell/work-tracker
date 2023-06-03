@@ -1,10 +1,11 @@
 import { ValidationError } from '@/core/common/helpers/ErrorHandlers.helper';
+import { UUID } from '@/core/common/helpers/UUID.helper';
 
 export class WorkId {
 	private value: string;
 
 	constructor() {
-		this.value = 'Id not provided';
+		this.value = UUID();
 	}
 
 	get(): string {

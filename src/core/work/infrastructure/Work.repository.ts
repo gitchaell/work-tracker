@@ -1,4 +1,4 @@
 import { DatabaseStorage } from '@/core/common/helpers/DatabaseStorage.helper';
-import { Work } from '@/core/work/domain/Work.entity';
+import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
 
-export const WorkRepository = DatabaseStorage.getCollection<Work>('Works');
+export const WorkRepository = DatabaseStorage.getCollection<WorkEntity>('Works');

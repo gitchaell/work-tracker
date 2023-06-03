@@ -1,4 +1,6 @@
+import { CurrencyFormatter } from '@/core/common/helpers/CurrencyFormatter.helper';
 import { ValidationError } from '@/core/common/helpers/ErrorHandlers.helper';
+import { Currency } from '@/core/currency/domain/Currency.model';
 
 export class TaskAmount {
 	private value: number;
@@ -19,6 +21,10 @@ export class TaskAmount {
 	add(value: number): void {
 		this.validate(value);
 		this.value += this.safe(value);
+	}
+
+	format(currency: Currency): string {
+		return CurrencyFormatter.format(this.value, currency.code.get(), currency.decimals.get());
 	}
 
 	private validate(value: number): void {

@@ -18,8 +18,8 @@ export const TaskTab = () => {
 	}, []);
 
 	useEffect(() => {
-		findTasks({ status: 'all', workId: workSelected?.id || '' });
-	}, [workSelected]);
+		findTasks({ status: 'all', workId: workSelected?.id.get() || '' });
+	}, []);
 
 	if (!workSelected) return null;
 
@@ -29,7 +29,7 @@ export const TaskTab = () => {
 				<Button
 					className="flex-grow"
 					color="gray"
-					onClick={() => findTasks({ status: 'all', workId: workSelected.id })}
+					onClick={() => findTasks({ status: 'all', workId: workSelected.id.get() })}
 				>
 					All Tasks
 				</Button>
@@ -37,7 +37,7 @@ export const TaskTab = () => {
 				<Button
 					className="flex-grow"
 					color="gray"
-					onClick={() => findTasks({ status: 'pending', workId: workSelected.id })}
+					onClick={() => findTasks({ status: 'pending', workId: workSelected.id.get() })}
 				>
 					Pending
 				</Button>
@@ -45,7 +45,7 @@ export const TaskTab = () => {
 				<Button
 					className="flex-grow"
 					color="gray"
-					onClick={() => findTasks({ status: 'done', workId: workSelected.id })}
+					onClick={() => findTasks({ status: 'done', workId: workSelected.id.get() })}
 				>
 					Done
 				</Button>

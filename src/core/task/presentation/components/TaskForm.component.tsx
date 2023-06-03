@@ -21,13 +21,13 @@ export const TaskForm = () => {
 
 	const formik = useFormik<TaskEntity>({
 		initialValues: {
-			id: taskSelected ? taskSelected.id.get() : '',
-			description: taskSelected ? taskSelected.description.get() : '',
-			seconds: taskSelected ? taskSelected.seconds.get() : 0,
-			amount: taskSelected ? taskSelected.amount.get() : 0,
-			done: taskSelected ? taskSelected.done.get() : false,
-			status: taskSelected ? taskSelected.status.get() : 'paused',
-			workId: workSelected ? workSelected.id.get() : '',
+			id: taskSelected?.id.get() || '',
+			description: taskSelected?.description.get() || '',
+			seconds: taskSelected?.seconds.get() || 0,
+			amount: taskSelected?.amount.get() || 0,
+			done: taskSelected?.done.get() || false,
+			status: taskSelected?.status.get() || 'paused',
+			workId: workSelected?.id.get() || '',
 		},
 		validationSchema: TaskValidationSchema,
 		onSubmit: (task: TaskEntity) => {
@@ -36,7 +36,7 @@ export const TaskForm = () => {
 			} else {
 				createTask(task);
 			}
-			navigate('/home');
+			navigate('/');
 			unselectTask();
 		},
 	});
@@ -44,13 +44,13 @@ export const TaskForm = () => {
 	const handleDeleteWork = useCallback(() => {
 		if (taskSelected) {
 			deleteTask(taskSelected);
-			navigate('/home');
+			navigate('/');
 			unselectTask();
 		}
 	}, []);
 
 	const handleCancelForm = useCallback(() => {
-		navigate('/home');
+		navigate('/');
 		unselectTask();
 	}, []);
 

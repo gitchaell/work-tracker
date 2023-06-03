@@ -1,6 +1,6 @@
-import { Currency } from '@/core/currency/domain/Currency.entity';
+import { CurrencyEntity } from '@/core/currency/domain/entities/Currency.entity';
 
-export const CurrencyMock: Currency[] = [
+export const CurrencyMock: CurrencyEntity[] = [
 	{
 		id: '295694dc-cbca-417c-83de-7ea29901a29f',
 		code: 'AED',

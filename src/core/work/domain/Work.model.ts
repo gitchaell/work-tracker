@@ -1,4 +1,3 @@
-import { WorkEntity } from '@/core/work/domain/entities/Work.entity';
 import { WorkId } from '@/core/work/domain/value-objects/WorkId.value';
 import { WorkTitle } from '@/core/work/domain/value-objects/WorkTitle.value';
 import { WorkMinSalary } from '@/core/work/domain/value-objects/WorkMinSalary.value';
@@ -39,34 +38,6 @@ export class Work {
 	};
 	currency: Currency;
 	createdAt: WorkCreatedAt;
-
-	static from(entity: WorkEntity, currency: Currency): Work {
-		const work = new Work();
-
-		work.id.set(entity.id);
-		work.title.set(entity.title);
-		work.minSalary.set(entity.minSalary);
-		work.experience.set(entity.experience);
-		work.demand.set(entity.demand);
-		work.profitMargin.perMonth.set(entity.profitMargin.perMonth);
-		work.costs.perMonth.set(entity.costs.perMonth);
-		work.workHours.perDay.set(entity.workHours.perDay);
-		work.workDays.perWeek.set(entity.workDays.perWeek);
-		work.rate.perSecond.set(entity.rate.perSecond);
-		work.rate.perMinute.set(entity.rate.perMinute);
-		work.rate.perHour.set(entity.rate.perHour);
-		work.rate.perDay.set(entity.rate.perDay);
-		work.rate.perWeek.set(entity.rate.perWeek);
-		work.rate.perMonth.set(entity.rate.perMonth);
-		work.rate.perYear.set(entity.rate.perYear);
-		work.createdAt.set(entity.createdAt);
-
-		work.setCurrency(currency);
-
-		work.calculateRate();
-
-		return work;
-	}
 
 	constructor() {
 		this.id = new WorkId();

@@ -1,42 +1,56 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
-import { CheckInGuard } from '@/routes/Guards';
+import { RequireGeolocationGuard } from '@/routes/Guards';
 
-import { NotFoundPage } from './*/NotFound.page';
-import { HomePage } from './home/Home.page';
-import { GeolocationFormPage } from './geolocation/form/GeolocationForm.page';
-import { WorkFormPage } from './work/form/WorkForm.page';
-import { TaskFormPage } from './task/form/TaskForm.page';
+import { Layout } from '@/routes/Layout';
+import { NotFoundPage } from '@/routes/*/NotFound.page';
+import { HomePage } from '@/routes/home/Home.page';
+import { GeolocationPage } from '@/routes/geolocation/Geolocation.page';
+import { GeolocationFormPage } from '@/routes/geolocation/form/GeolocationForm.page';
+import { WorkPage } from '@/routes/work/Work.page';
+import { WorkFormPage } from '@/routes/work/form/WorkForm.page';
+import { TaskFormPage } from '@/routes/task/form/TaskForm.page';
+import { TaskPage } from '@/routes/task/Task.page';
 
 export const Router = () => {
 	return (
 		<Routes>
-			<Route path="/" element={<Navigate to="/home" replace />} />
-			<Route
-				path="/home"
-				element={
-					<CheckInGuard>
-						<HomePage />
-					</CheckInGuard>
-				}
-			/>
-			<Route
-				path="/work/form"
-				element={
-					<CheckInGuard>
-						<WorkFormPage />
-					</CheckInGuard>
-				}
-			/>
-			<Route
-				path="/task/form"
-				element={
-					<CheckInGuard>
-						<TaskFormPage />
-					</CheckInGuard>
-				}
-			/>
-			<Route path="/geolocation/form" element={<GeolocationFormPage />} />
+			<Route path="/" element={<Layout />}>
+				<Route
+					index
+					element={
+						<RequireGeolocationGuard>
+							<HomePage />
+						</RequireGeolocationGuard>
+					}
+				/>
+
+				<Route
+					path="work"
+					element={
+						<RequireGeolocationGuard>
+							<WorkPage />
+						</RequireGeolocationGuard>
+					}
+				>
+					<Route path="form" element={<WorkFormPage />} />
+				</Route>
+
+				<Route
+					path="task"
+					element={
+						<RequireGeolocationGuard>
+							<TaskPage />
+						</RequireGeolocationGuard>
+					}
+				>
+					<Route path="form" element={<TaskFormPage />} />
+				</Route>
+
+				<Route path="geolocation" element={<GeolocationPage />}>
+					<Route path="form" element={<GeolocationFormPage />} />
+				</Route>
+			</Route>
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	);
