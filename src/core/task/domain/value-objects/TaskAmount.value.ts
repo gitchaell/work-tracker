@@ -24,7 +24,7 @@ export class TaskAmount {
 	}
 
 	format(currency: Currency): string {
-		return CurrencyFormatter.format(this.value, currency.code.get(), currency.decimals.get());
+		return CurrencyFormatter.format(this.value, currency.code.get(), 4);
 	}
 
 	private validate(value: number): void {

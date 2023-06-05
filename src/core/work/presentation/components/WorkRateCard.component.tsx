@@ -46,6 +46,18 @@ export const WorkRateCard = () => {
 							{currencySelected.format(workSelected.rate.perHour.get())}/ hour
 						</span>
 					</li>
+					<li className="flex space-x-3">
+						<HiCheckCircle className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-500" />
+						<span className="text-sm font-normal leading-tight text-gray-500 dark:text-gray-400">
+							{currencySelected.format(workSelected.rate.perMinute.get())}/ minute
+						</span>
+					</li>
+					<li className="flex space-x-3">
+						<HiCheckCircle className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-500" />
+						<span className="text-sm font-normal leading-tight text-gray-500 dark:text-gray-400">
+							{currencySelected.format(workSelected.rate.perSecond.get())}/ second
+						</span>
+					</li>
 				</ul>
 			</div>
 		</section>

@@ -7,57 +7,43 @@ import { TaskRepository } from '../../infrastructure/Task.repository';
 export class TimeTaskCommand {
 	static timers: Record<string, Task> = {};
 
-	static startTask(task: Task | TaskEntity): TaskEntity {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
+	static onTimeTask = (taskUpdated: Task) => {
+		const taskEntity = TaskMapper.toEntity(taskUpdated);
+		TaskRepository.update(taskEntity);
+		TaskTimedEvent.publish({ task: taskEntity });
+	};
+
+	static startTask(task: Task | TaskEntity): Task {
+		if (!(task instanceof Task)) {
+			task = TaskMapper.toModel(task);
 		}
 
-		TimeTaskCommand.timers[task.id] = TaskMapper.toModel(task);
-		TimeTaskCommand.timers[task.id].start((taskUpdated: Task) => {
-			const taskEntity = TaskMapper.toEntity(taskUpdated);
-			TaskRepository.update(taskEntity);
-			TaskTimedEvent.publish({ task: taskEntity });
-		});
+		TimeTaskCommand.timers[task.id.get()] = task;
+		TimeTaskCommand.timers[task.id.get()].start(TimeTaskCommand.onTimeTask);
 
 		return task;
 	}
 
-	static stopTask(task: Task | TaskEntity): TaskEntity {
-		if (task instanceof Task) {
-			task = TaskMapper.toEntity(task);
+	static stopTask(task: Task | TaskEntity): Task {
+		if (!(task instanceof Task)) {
+			task = TaskMapper.toModel(task);
 		}
 
-		if (!TimeTaskCommand.timers[task.id]) {
-			const taskModel = TaskMapper.toModel(task);
-
-			taskModel.stop((taskUpdated: Task) => {
-				const taskEntity = TaskMapper.toEntity(taskUpdated);
-				TaskRepository.update(taskEntity);
-				TaskTimedEvent.publish({ task: taskEntity });
-			});
-
+		if (!TimeTaskCommand.timers[task.id.get()]) {
+			task.stop(TimeTaskCommand.onTimeTask);
 			return task;
 		}
 
-		TimeTaskCommand.timers[task.id].stop((taskUpdated: Task) => {
-			const taskEntity = TaskMapper.toEntity(taskUpdated);
-			TaskRepository.update(taskEntity);
-			TaskTimedEvent.publish({ task: taskEntity });
-		});
+		TimeTaskCommand.timers[task.id.get()].stop(TimeTaskCommand.onTimeTask);
 
-		delete TimeTaskCommand.timers[task.id];
+		delete TimeTaskCommand.timers[task.id.get()];
 
 		return task;
 	}
 
 	static stopAllTasks(): void {
 		for (const task of Object.values(TimeTaskCommand.timers)) {
-			TimeTaskCommand.timers[task.id.get()].stop((taskUpdated: Task) => {
-				const taskEntity = TaskMapper.toEntity(taskUpdated);
-
-				TaskRepository.update(taskEntity);
-				TaskTimedEvent.publish({ task: taskEntity });
-			});
+			TimeTaskCommand.timers[task.id.get()].stop(TimeTaskCommand.onTimeTask);
 
 			delete TimeTaskCommand.timers[task.id.get()];
 		}

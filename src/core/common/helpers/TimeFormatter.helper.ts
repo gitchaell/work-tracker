@@ -1,11 +1,12 @@
 export class TimeFormatter {
-	static format(milliseconds: number): string {
-		const pad = (number: number) => number.toString().padStart(2, '0');
+	static format(ms: number): string {
+		const pad = (number: number, length: number) => number.toString().padStart(length, '0');
 
-		const seconds = Math.floor(milliseconds / 1000) % 60;
-		const minutes = Math.floor(milliseconds / (1000 * 60)) % 60;
-		const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+		const date = new Date(ms);
+		const hours = date.getUTCHours();
+		const minutes = date.getUTCMinutes();
+		const seconds = date.getUTCSeconds();
 
-		return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+		return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`;
 	}
 }

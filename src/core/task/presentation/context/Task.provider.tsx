@@ -42,16 +42,12 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
 
 	const startTask = useCallback((task: Task | TaskEntity) => {
 		const taskStarted = TaskService.startTask(task);
-		const taskModel = TaskMapper.toModel(taskStarted);
-
-		return taskModel;
+		return taskStarted;
 	}, []);
 
 	const stopTask = useCallback((task: Task | TaskEntity) => {
 		const taskStopped = TaskService.stopTask(task);
-		const taskModel = TaskMapper.toModel(taskStopped);
-
-		return taskModel;
+		return taskStopped;
 	}, []);
 
 	const createTask = useCallback((task: Task | TaskEntity) => {
