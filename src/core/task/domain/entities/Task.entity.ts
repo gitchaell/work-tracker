@@ -5,6 +5,8 @@ export interface TaskEntity {
 	amount: number;
 	done: boolean;
 	status: TaskStatusValues;
+	startedAt: string;
+	createdAt: string;
 	workId: string;
 }
 

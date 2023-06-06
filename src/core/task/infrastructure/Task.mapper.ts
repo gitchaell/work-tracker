@@ -13,6 +13,8 @@ export class TaskMapper {
 			amount: task.amount.get(),
 			done: task.done.get(),
 			status: task.status.get(),
+			startedAt: task.startedAt.get(),
+			createdAt: task.createdAt.get(),
 			workId: task.work.id.get(),
 		};
 	}
@@ -32,6 +34,8 @@ export class TaskMapper {
 		task.amount.set(taskEntity.amount);
 		task.done.set(taskEntity.done);
 		task.status.set(taskEntity.status);
+		task.startedAt.set(taskEntity.startedAt);
+		task.createdAt.set(taskEntity.createdAt);
 
 		task.setWork(WorkMapper.toModel(work));
 

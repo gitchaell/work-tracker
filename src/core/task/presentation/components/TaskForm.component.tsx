@@ -27,6 +27,8 @@ export const TaskForm = () => {
 			amount: taskSelected?.amount.get() || 0,
 			done: taskSelected?.done.get() || false,
 			status: taskSelected?.status.get() || 'paused',
+			startedAt: taskSelected?.startedAt.get() || '',
+			createdAt: taskSelected?.createdAt.get() || new Date().toISOString(),
 			workId: workSelected?.id.get() || '',
 		},
 		validationSchema: TaskValidationSchema,

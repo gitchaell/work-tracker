@@ -64,6 +64,8 @@ Work Tracker allows you to calculate the monetary value of your daily tasks. It 
 | amount      | number  | Accumulated amount to be charged for the task |
 | done        | boolean | Indicates whether the task is completed       |
 | status      | string  | Status of the task                            |
+| startedAt   | string  | Date and time when the task was started       |
+| createdAt   | string  | Date and time when the task was created       |
 | workId      | string  | ID of the work associated with the task       |
 
 ## Graph
@@ -123,3 +125,7 @@ classDiagram
   Task --> Work
 
 ```
+
+## App Structure
+
+![image](https://github.com/gitchaell/work-tracker/assets/37460957/7c39daa2-3eeb-4665-a1f3-3a1fb0305fd8)
