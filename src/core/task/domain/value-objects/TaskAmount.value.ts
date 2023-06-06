@@ -18,11 +18,6 @@ export class TaskAmount {
 		this.value = this.safe(value);
 	}
 
-	add(value: number): void {
-		this.validate(value);
-		this.value += this.safe(value);
-	}
-
 	format(currency: Currency): string {
 		return CurrencyFormatter.format(this.value, currency.code.get(), 4);
 	}

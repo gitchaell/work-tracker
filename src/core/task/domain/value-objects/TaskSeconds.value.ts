@@ -17,11 +17,6 @@ export class TaskSeconds {
 		this.value = this.safe(value);
 	}
 
-	add(value: number): void {
-		this.validate(value);
-		this.value += this.safe(value);
-	}
-
 	format(): string {
 		return TimeFormatter.format(this.value * 1000);
 	}

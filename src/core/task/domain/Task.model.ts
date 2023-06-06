@@ -4,7 +4,6 @@ import { TaskSeconds } from '@/core/task/domain/value-objects/TaskSeconds.value'
 import { TaskAmount } from '@/core/task/domain/value-objects/TaskAmount.value';
 import { TaskDone } from '@/core/task/domain/value-objects/TaskDone.value';
 import { TaskStatus } from '@/core/task/domain/value-objects/TaskStatus.value';
-import { TaskTimer } from '@/core/task/domain/value-objects/TaskTimer.value';
 import { Work } from '@/core/work/domain/Work.model';
 
 export class Task {
@@ -16,7 +15,8 @@ export class Task {
 	status: TaskStatus;
 	work: Work;
 
-	timer: TaskTimer;
+	private startTime!: number;
+	private tickIntervalId!: number;
 
 	constructor() {
 		this.id = new TaskId();
@@ -26,37 +26,31 @@ export class Task {
 		this.done = new TaskDone();
 		this.status = new TaskStatus();
 		this.work = new Work();
-
-		this.timer = new TaskTimer();
 	}
 
-	private onStart = (callback: (task: Task) => void) => {
+	start(callback: (taskUpdated: Task) => void): void {
+		this.startTime = Date.now();
+
 		this.status.set('running');
-		callback(this);
-	};
 
-	private onTick = (callback: (task: Task) => void) => {
-		this.seconds.add(1);
-		this.amount.add(this.work.rate.perSecond.get());
 		callback(this);
-	};
 
-	private onStop = (callback: (task: Task) => void) => {
-		this.status.set('paused');
-		callback(this);
-	};
+		this.tickIntervalId = window.setInterval(() => {
+			const currentTime = Date.now();
+			const elapsedTime = Math.floor((currentTime - this.startTime) / 1000);
 
-	start(callback: (task: Task) => void): void {
-		this.timer.start({
-			onStart: () => this.onStart(callback),
-			onTick: () => this.onTick(callback),
-		});
+			this.seconds.set(elapsedTime);
+			this.amount.set(this.seconds.get() * this.work.rate.perSecond.get());
+
+			callback(this);
+		}, 1000);
 	}
 
-	stop(callback: (task: Task) => void): void {
-		this.timer.stop({
-			onStop: () => this.onStop(callback),
-		});
+	stop(callback: (taskUpdated: Task) => void): void {
+		window.clearInterval(this.tickIntervalId);
+		this.status.set('paused');
+
+		callback(this);
 	}
 
 	setWork(work: Work): void {

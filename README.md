@@ -1,154 +1,125 @@
 # Work Tracker
 
-Work Tracker te permite calcular el valor monetario de tus tareas diarias.
-Proporciona herramientas para registrar y gestionar tareas, así como visualizar el valor monetario asociado a cada una.
+Work Tracker allows you to calculate the monetary value of your daily tasks. It provides tools for recording and managing tasks, as well as visualizing the associated monetary value.
 
 ## APIs
 
-- OpenStreetMapAPI: Para obtener información de geolocalización y datos de direcciones.
-- ExchangeRatesAPI: Para obtener tasas de cambio de divisas y conversiones monetarias.
+- OpenStreetMapAPI: To obtain geolocation information and address data.
+- ExchangeRatesAPI: To retrieve currency exchange rates and perform monetary conversions.
 
-## Entidades
+## Entities
 
-### Geolocation Entity
+### Geolocation
 
-Representa una ubicación geográfica.
+| Property  | Type   | Description                          |
+| --------- | ------ | ------------------------------------ |
+| id        | string | Unique identifier of the entity      |
+| country   | string | Country                              |
+| state     | string | State or province                    |
+| city      | string | City of the task                     |
+| address   | string | Complete address                     |
+| latitude  | number | Geographic latitude                  |
+| longitude | number | Geographic longitude                 |
 
-| Propiedad | Tipo   | Descripción                       |
-| --------- | ------ | --------------------------------- |
-| id        | string | Identificador único de la entidad |
-| country   | string | País                              |
-| state     | string | Estado o provincia                |
-| city      | string | Ciudad                            |
-| address   | string | Dirección completa                |
-| latitude  | number | Latitud geográfica                |
-| longitude | number | Longitud geográfica               |
+### Currency
 
-### Currency Entity
+| Property  | Type     | Description                                       |
+| --------- | -------- | ------------------------------------------------- |
+| id        | string   | Unique identifier of the entity                   |
+| name      | string   | Name of the currency                              |
+| code      | string   | Currency code                                     |
+| decimals  | number   | Number of decimal places for the currency         |
+| countries | string[] | List of countries where the currency is accepted  |
 
-Representa una moneda.
+### Work
 
-| Propiedad | Tipo     | Descripción                                |
-| --------- | -------- | ------------------------------------------ |
-| id        | string   | Identificador único de la entidad          |
-| name      | string   | Nombre de la moneda                        |
-| code      | string   | Código de la moneda                        |
-| decimals  | number   | Número de decimales de la moneda           |
-| countries | string[] | Lista de países donde se utiliza la moneda |
+| Property              | Type   | Description                                    |
+| --------------------- | ------ | ---------------------------------------------- |
+| id                    | string | Unique identifier of the work                  |
+| title                 | string | Title or name of the work                      |
+| minSalary             | number | National minimum salary                        |
+| experience            | string | Your level of experience                       |
+| demand                | string | The demand level of your profession            |
+| profitMargin.perMonth | number | Monthly profit margin                          |
+| costs.perMonth        | number | Your monthly living costs                      |
+| workHours.perDay      | number | Number of work hours per day                   |
+| workDays.perWeek      | number | Number of work days per week                   |
+| rate.perSecond        | number | Rate per second of work                        |
+| rate.perMinute        | number | Rate per minute of work                        |
+| rate.perHour          | number | Rate per hour of work                          |
+| rate.perDay           | number | Rate per day of work                           |
+| rate.perWeek          | number | Rate per week of work                          |
+| rate.perMonth         | number | Rate per month of work                         |
+| rate.perYear          | number | Rate per year of work                          |
+| currencyId            | string | ID of the currency used in the work            |
+| createdAt             | string | Date and time when the work was created        |
 
-### Work Entity
+### Task
 
-Representa un trabajo.
+| Property    | Type    | Description                                   |
+| ----------- | ------- | --------------------------------------------- |
+| id          | string  | Unique identifier of the task                 |
+| description | string  | Description of the task                       |
+| seconds     | number  | Time spent on the task in seconds             |
+| amount      | number  | Accumulated amount to be charged for the task |
+| done        | boolean | Indicates whether the task is completed       |
+| status      | string  | Status of the task                            |
+| workId      | string  | ID of the work associated with the task       |
 
-| Propiedad    | Tipo                 | Descripción                             |
-| ------------ | -------------------- | --------------------------------------- |
-| id           | string               | Identificador único de la entidad       |
-| title        | string               | Título o nombre del trabajo             |
-| minSalary    | number               | Salario mínimo nacional                 |
-| experience   | WorkExperienceValues | Tu nivel de experiencia                 |
-| demand       | WorkDemandValues     | El nivel de demanda de tu profesion     |
-| profitMargin | { perMonth: number } | Margen de ganancia mensual              |
-| costs        | { perMonth: number } | Tus costos de vida mensuales            |
-| workHours    | { perDay: number }   | Horas de trabajo por día                |
-| workDays     | { perWeek: number }  | Días de trabajo por semana              |
-| rate         | RateValues           | Tarifas del trabajo                     |
-| currencyId   | string               | ID de la moneda utilizada en el trabajo |
-| createdAt    | string               | Fecha de creación del trabajo           |
-
-### TaskEntity
-
-Representa una tarea.
-
-| Propiedad   | Tipo                | Descripción                             |
-| ----------- | ------------------- | --------------------------------------- |
-| id          | string              | Identificador único de la entidad       |
-| description | string              | Descripción de la tarea                 |
-| seconds     | number              | Tiempo dedicado a la tarea en segundos  |
-| amount      | number              | Monto acumulado a cobrar por la tarea   |
-| done        | boolean             | Indica si la tarea está completada      |
-| status      | 'running', 'paused' | Estado de la tarea                      |
-| workId      | string              | ID del trabajo relacionado con la tarea |
-
-## Diagrama de Entidades
+## Graph
 
 ```mermaid
 classDiagram
   class Geolocation {
-    id: string
-    country: string
-    state: string
-    city: string
-    address: string
-    latitude: number
-    longitude: number
+    String id
+    String country
+    String state
+    String city
+    String address
+    Number latitude
+    Number longitude
   }
 
   class Currency {
-    id: string
-    name: string
-    code: string
-    decimals: number
-    countries: string[]
+    String id
+    String name
+    String code
+    Number decimals
+    String[] countries
   }
 
   class Work {
-    id: string
-    title: string
-    minSalary: number
-    experience: WorkExperienceValues
-    demand: WorkDemandValues
-    profitMargin: {
-      perMonth: number
-    }
-    costs: {
-      perMonth: number
-    }
-    workHours: {
-      perDay: number
-    }
-    workDays: {
-      perWeek: number
-    }
-    rate: {
-      perSecond: number
-      perMinute: number
-      perHour: number
-      perDay: number
-      perWeek: number
-      perMonth: number
-      perYear: number
-    }
-    currencyId: string
-    createdAt: string
+    String id
+    String title
+    Number minSalary
+    String experience
+    String demand
+    Number profitMargin.perMonth
+    Number costs.perMonth
+    Number workHours.perDay
+    Number workDays.perWeek
+    Number rate.perSecond
+    Number rate.perMinute
+    Number rate.perHour
+    Number rate.perDay
+    Number rate.perWeek
+    Number rate.perMonth
+    Number rate.perYear
+    String currencyId
+    String createdAt
   }
 
   class Task {
-    id: string
-    description: string
-    seconds: number
-    amount: number
-    done: boolean
-    status: TaskStatusValues
-    workId: string
+    String id
+    String description
+    Number seconds
+    Number amount
+    Boolean done
+    String status
+    String workId
   }
 
-  class WorkExperienceValues {
-    values: string[]
-  }
-
-  class WorkDemandValues {
-    values: string[]
-  }
-
-  class TaskStatusValues {
-    values: string[]
-  }
-
-  Geolocation --> Task
   Work --> Currency
-  Work --> WorkExperienceValues
-  Work --> WorkDemandValues
   Task --> Work
-  Task --> TaskStatusValues
 
 ```
